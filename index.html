@@ -70,6 +70,13 @@
   .btn-wide { width: 100%; }
   .btn-quiet { background: transparent; color: var(--ink); border-color: var(--line); padding: 8px 14px; font-size: 14px; }
 
+  .key-wrap { position: relative; display: block; }
+  .key-wrap input { padding-left: 76px; }
+  .key-toggle {
+    position: absolute; left: 6px; top: 50%; transform: translateY(-50%);
+    background: none; border: 0; color: var(--muted); font-size: 13px; padding: 6px 10px; cursor: pointer;
+    border-radius: var(--r-sm);
+  }
   .error { color: var(--danger); font-size: 14px; margin: 12px 0 0; min-height: 1.6em; }
 
   /* ---------- App ---------- */
@@ -176,7 +183,10 @@
     </label>
     <label class="field">
       <span class="field-name">المفتاح</span>
-      <input type="password" id="token" dir="ltr" required spellcheck="false" autocapitalize="off" placeholder="github_pat_…">
+      <span class="key-wrap">
+        <input type="password" id="token" name="lafta-key" dir="ltr" required spellcheck="false" autocapitalize="off" autocomplete="off" placeholder="github_pat_…">
+        <button type="button" class="key-toggle" id="keyToggle" aria-pressed="false">إظهار</button>
+      </span>
       <span class="field-hint">ينحفظ في هذا الجهاز بس.</span>
     </label>
 
@@ -296,7 +306,9 @@
     if (status === 403) return ctx === 'write'
       ? 'المفتاح ما عنده صلاحية كتابة. خلي Contents على Read and write.'
       : 'GitHub رفض الطلب. تأكد من صلاحيات المفتاح.';
-    if (status === 404) return 'ما لقيت الريبو. تأكد من الاسم، وإن المفتاح له صلاحية عليه.';
+    if (status === 404) return ctx === 'repo'
+      ? `المفتاح شغال، بس ما يشوف "${state.cfg.repo}". تأكد إنك لصقت المفتاح الجديد، وإنه مربوط بهذا الريبو.`
+      : 'ما لقيت الملف. تأكد إن المفتاح له صلاحية Contents.';
     return 'صار خطأ من GitHub (' + status + '). جرب مرة ثانية.';
   }
 
@@ -461,6 +473,13 @@
     } finally {
       btn.disabled = false; btn.textContent = 'افتح';
     }
+  });
+
+  $('keyToggle').addEventListener('click', () => {
+    const t = $('token'), showing = t.type === 'text';
+    t.type = showing ? 'password' : 'text';
+    $('keyToggle').textContent = showing ? 'إظهار' : 'إخفاء';
+    $('keyToggle').setAttribute('aria-pressed', String(!showing));
   });
 
   $('lockBtn').addEventListener('click', () => {
