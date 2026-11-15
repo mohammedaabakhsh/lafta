@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#F3F4F1">
+<title>لفتة</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #F3F4F1;
+    --surface: #FFFFFF;
+    --ink: #1E2629;
+    --muted: #6E7B7F;
+    --line: #DDE1DC;
+    --brass: #A9823A;
+    --danger: #A8402F;
+    --t-link: #2E6A88;
+    --t-place: #3C7A57;
+    --t-info: #A9823A;
+    --t-data: #765B8C;
+    --r-sm: 6px;
+    --r-md: 12px;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font: 400 16px/1.6 "IBM Plex Sans Arabic", system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+  }
+  button, input, textarea { font: inherit; color: inherit; }
+  [hidden] { display: none !important; }
+  :focus-visible { outline: 2px solid var(--brass); outline-offset: 2px; }
+
+  .wrap { max-width: 620px; margin: 0 auto; padding: 24px 18px 80px; }
+
+  /* ---------- Lock screen ---------- */
+  #lock { min-height: 100vh; display: grid; place-items: center; padding: 32px 18px; }
+  .lock-inner { width: 100%; max-width: 380px; }
+  .keyhole { display: block; width: 56px; height: 56px; margin: 0 0 28px; }
+  .lock-title {
+    font-size: 64px; line-height: 1; font-weight: 700; margin: 0 0 12px; letter-spacing: -0.5px;
+  }
+  .lock-sub { color: var(--muted); margin: 0 0 32px; }
+
+  label.field { display: block; margin-bottom: 16px; }
+  .field-name { display: block; font-size: 14px; font-weight: 500; margin-bottom: 6px; }
+  .field-hint { display: block; font-size: 13px; color: var(--muted); margin-top: 4px; }
+  input[type=text], input[type=password], input[type=url], textarea {
+    width: 100%; padding: 12px 14px; background: var(--surface);
+    border: 1px solid var(--line); border-radius: var(--r-sm); outline: none;
+    transition: border-color .15s;
+  }
+  input:focus, textarea:focus { border-color: var(--ink); }
+  input[dir=ltr] { text-align: left; }
+  textarea { resize: vertical; min-height: 72px; }
+
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    padding: 12px 22px; border-radius: var(--r-sm); border: 1px solid var(--ink);
+    background: var(--ink); color: var(--paper); font-weight: 500; cursor: pointer;
+  }
+  .btn:disabled { opacity: .55; cursor: progress; }
+  .btn-wide { width: 100%; }
+  .btn-quiet { background: transparent; color: var(--ink); border-color: var(--line); padding: 8px 14px; font-size: 14px; }
+
+  .error { color: var(--danger); font-size: 14px; margin: 12px 0 0; min-height: 1.6em; }
+
+  /* ---------- App ---------- */
+  header.top { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 24px; }
+  .app-title { font-size: 28px; font-weight: 700; margin: 0; line-height: 1.2; }
+  .count { color: var(--muted); font-size: 14px; font-weight: 400; margin-inline-start: 8px; }
+  .preview-note {
+    margin: -8px 0 20px; padding: 10px 14px; border-radius: var(--r-sm); font-size: 14px;
+    background: color-mix(in srgb, var(--brass) 10%, white); color: #6B5223;
+  }
+
+  .composer {
+    background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-md);
+    padding: 18px; margin-bottom: 32px;
+  }
+  .types { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 14px; }
+  .types input { position: absolute; opacity: 0; pointer-events: none; }
+  .types label {
+    display: block; text-align: center; padding: 8px 4px; border-radius: var(--r-sm);
+    border: 1px solid var(--line); font-size: 14px; cursor: pointer; user-select: none;
+  }
+  .types input:checked + span { font-weight: 700; }
+  .types label:has(input:checked) { border-color: var(--tc); color: var(--tc); background: color-mix(in srgb, var(--tc) 8%, white); }
+  .types label:has(input:focus-visible) { outline: 2px solid var(--brass); outline-offset: 2px; }
+  .composer .row { margin-bottom: 10px; }
+  .composer-foot { display: flex; justify-content: flex-start; margin-top: 4px; }
+
+  .filters { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 8px; }
+  .chip {
+    border: 1px solid var(--line); background: transparent; border-radius: 999px;
+    padding: 5px 14px; font-size: 14px; cursor: pointer;
+  }
+  .chip[aria-pressed=true] { background: var(--ink); border-color: var(--ink); color: var(--paper); }
+
+  ul.items { list-style: none; margin: 0; padding: 0; }
+  .item {
+    display: flex; gap: 14px; padding: 16px 0; border-bottom: 1px solid var(--line);
+  }
+  .item.fresh { animation: in .3s ease-out; }
+  .item::before {
+    content: ""; flex: 0 0 3px; border-radius: 2px; background: var(--tc);
+  }
+  .item-body { flex: 1; min-width: 0; }
+  .item-meta { display: flex; gap: 10px; align-items: baseline; font-size: 13px; color: var(--muted); }
+  .item-type { color: var(--tc); font-weight: 500; }
+  .item h3 { font-size: 17px; font-weight: 500; margin: 2px 0 2px; overflow-wrap: anywhere; }
+  .item a {
+    display: block; color: var(--t-link); font-size: 14px; text-decoration: none;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; direction: ltr; text-align: right;
+  }
+  .item a:hover { text-decoration: underline; }
+  .item p { margin: 4px 0 0; color: var(--ink); opacity: .85; font-size: 15px; white-space: pre-wrap; overflow-wrap: anywhere; }
+  .del {
+    align-self: flex-start; background: none; border: 0; color: var(--muted);
+    font-size: 13px; padding: 4px 6px; cursor: pointer; border-radius: var(--r-sm);
+  }
+  .del.armed { color: var(--danger); font-weight: 500; }
+
+  [data-type=link]  { --tc: var(--t-link); }
+  [data-type=place] { --tc: var(--t-place); }
+  [data-type=info]  { --tc: var(--t-info); }
+  [data-type=data]  { --tc: var(--t-data); }
+
+  .empty { color: var(--muted); padding: 32px 0; text-align: center; }
+
+  .toast {
+    position: fixed; inset-inline: 0; bottom: 24px; margin: 0 auto; width: max-content; max-width: calc(100% - 36px);
+    background: var(--ink); color: var(--paper); padding: 10px 18px; border-radius: 999px; font-size: 14px;
+    opacity: 0; transform: translateY(8px); transition: opacity .2s, transform .2s; pointer-events: none;
+  }
+  .toast.show { opacity: 1; transform: none; }
+  .toast.bad { background: var(--danger); }
+
+  .loading { min-height: 100vh; display: grid; place-items: center; color: var(--muted); }
+
+  @keyframes in { from { opacity: 0; transform: translateY(-4px); } }
+  @media (prefers-reduced-motion: reduce) {
+    * { animation: none !important; transition: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<div id="loading" class="loading">يفتح…</div>
+
+<!-- ============ Lock ============ -->
+<main id="lock" hidden>
+  <form class="lock-inner" id="lockForm" autocomplete="off">
+    <svg class="keyhole" viewBox="0 0 56 56" aria-hidden="true">
+      <circle cx="28" cy="28" r="27" fill="none" stroke="#A9823A" stroke-width="1.5"/>
+      <circle cx="28" cy="23" r="7" fill="#A9823A"/>
+      <path d="M24.5 26 L22 40 H34 L31.5 26 Z" fill="#A9823A"/>
+    </svg>
+    <h1 class="lock-title">لفتة</h1>
+    <p class="lock-sub">افتح بمفتاح GitHub حقك.</p>
+
+    <label class="field">
+      <span class="field-name">اسم المستخدم في GitHub</span>
+      <input type="text" id="owner" dir="ltr" required spellcheck="false" autocapitalize="off">
+    </label>
+    <label class="field">
+      <span class="field-name">ريبو الداتا (الخاص)</span>
+      <input type="text" id="repo" dir="ltr" required spellcheck="false" autocapitalize="off" value="lafta-data">
+    </label>
+    <label class="field">
+      <span class="field-name">المفتاح</span>
+      <input type="password" id="token" dir="ltr" required spellcheck="false" autocapitalize="off" placeholder="github_pat_…">
+      <span class="field-hint">ينحفظ في هذا الجهاز بس.</span>
+    </label>
+
+    <button class="btn btn-wide" type="submit" id="unlockBtn">افتح</button>
+    <p class="error" id="lockError" role="alert"></p>
+  </form>
+</main>
+
+<!-- ============ App ============ -->
+<div id="app" hidden>
+  <div class="wrap">
+    <header class="top">
+      <h1 class="app-title">لفتة<span class="count" id="count"></span></h1>
+      <button class="btn btn-quiet" id="lockBtn" type="button">قفل</button>
+    </header>
+    <p class="preview-note" id="previewNote" hidden>معاينة: اللي تضيفه هنا ينحفظ في هذا الجهاز بس. النسخة الحقيقية تحفظ في GitHub.</p>
+
+    <form class="composer" id="addForm" autocomplete="off" novalidate>
+      <div class="types" role="radiogroup" aria-label="النوع">
+        <label data-type="link"><input type="radio" name="type" value="link" checked><span>لينك</span></label>
+        <label data-type="place"><input type="radio" name="type" value="place"><span>مكان</span></label>
+        <label data-type="info"><input type="radio" name="type" value="info"><span>معلومة</span></label>
+        <label data-type="data"><input type="radio" name="type" value="data"><span>داتا</span></label>
+      </div>
+      <div class="row"><input type="text" id="fTitle" placeholder="العنوان" aria-label="العنوان"></div>
+      <div class="row"><input type="url" id="fUrl" dir="ltr" placeholder="https://" aria-label="اللينك (اختياري)" inputmode="url"></div>
+      <div class="row"><textarea id="fNote" placeholder="ملاحظة (اختياري)" aria-label="ملاحظة"></textarea></div>
+      <div class="composer-foot"><button class="btn" type="submit" id="saveBtn">احفظ</button></div>
+    </form>
+
+    <div class="filters" id="filters" role="group" aria-label="فلترة">
+      <button class="chip" type="button" data-f="all" aria-pressed="true">الكل</button>
+      <button class="chip" type="button" data-f="link" aria-pressed="false">لينكات</button>
+      <button class="chip" type="button" data-f="place" aria-pressed="false">أماكن</button>
+      <button class="chip" type="button" data-f="info" aria-pressed="false">معلومات</button>
+      <button class="chip" type="button" data-f="data" aria-pressed="false">داتا</button>
+    </div>
+    <ul class="items" id="list"></ul>
+    <p class="empty" id="empty" hidden></p>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(() => {
+  const PREVIEW = false;   // true = try the app without GitHub (data stays on this device)
+  const API = 'https://api.github.com';
+  const FILE = 'data.json';
+  const STORE = 'lafta.v1';
+  const TYPES = { link: 'لينك', place: 'مكان', info: 'معلومة', data: 'داتا' };
+
+  const $ = (id) => document.getElementById(id);
+  const state = { cfg: null, items: [], sha: null, filter: 'all', busy: false };
+
+  /* ---------- local config (per device) ---------- */
+  const loadCfg = () => { try { return JSON.parse(localStorage.getItem(STORE)); } catch { return null; } };
+  const saveCfg = (c) => { try { localStorage.setItem(STORE, JSON.stringify(c)); } catch {} };
+  const clearCfg = () => { try { localStorage.removeItem(STORE); } catch {} };
+
+  /* ---------- preview storage (no GitHub) ---------- */
+  const DEMO = 'lafta.demo';
+  let memDemo = null;
+  function seed() {
+    const t = (d) => new Date(Date.now() - d * 86400000).toISOString();
+    return [
+      { id: 's1', type: 'place', title: 'الكورنيش الشمالي', url: 'https://maps.google.com/?q=Jeddah+North+Corniche', note: 'المشي وقت المغرب', createdAt: t(3) },
+      { id: 's2', type: 'link', title: 'Smashing Magazine', url: 'https://www.smashingmagazine.com', note: 'مقالات عن تصميم الواجهات', createdAt: t(2) },
+      { id: 's3', type: 'info', title: 'مفتاح GitHub ينحفظ في الجهاز بس', url: '', note: 'عشان كده ما ينحط في الكود', createdAt: t(1) },
+      { id: 's4', type: 'data', title: 'مقاس الغرفة', url: '', note: '4 × 5 م', createdAt: t(0) },
+    ];
+  }
+  function demoLoad() {
+    try { const s = localStorage.getItem(DEMO); if (s) return JSON.parse(s); } catch {}
+    return memDemo || (memDemo = seed());
+  }
+  function demoSave(items) {
+    memDemo = items;
+    try { localStorage.setItem(DEMO, JSON.stringify(items)); } catch {}
+  }
+
+  /* ---------- UTF-8 safe base64 (Arabic text) ---------- */
+  function encode(str) {
+    const bytes = new TextEncoder().encode(str);
+    let bin = '';
+    for (let i = 0; i < bytes.length; i += 0x8000) bin += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000));
+    return btoa(bin);
+  }
+  function decode(b64) {
+    const bin = atob(b64.replace(/\s/g, ''));
+    return new TextDecoder().decode(Uint8Array.from(bin, (c) => c.charCodeAt(0)));
+  }
+
+  /* ---------- GitHub API ---------- */
+  class GhError extends Error { constructor(status, msg) { super(msg); this.status = status; } }
+
+  async function gh(path, opts = {}) {
+    let res;
+    try {
+      res = await fetch(API + path, {
+        ...opts,
+        cache: 'no-store',
+        headers: {
+          Authorization: 'Bearer ' + state.cfg.token,
+          Accept: 'application/vnd.github+json',
+          ...(opts.body ? { 'Content-Type': 'application/json' } : {}),
+        },
+      });
+    } catch {
+      throw new GhError(0, 'ما قدرت أتصل بـ GitHub. تأكد من النت.');
+    }
+    return res;
+  }
+
+  function errorFor(status, ctx) {
+    if (status === 401) return 'المفتاح غلط أو منتهي.';
+    if (status === 403) return ctx === 'write'
+      ? 'المفتاح ما عنده صلاحية كتابة. خلي Contents على Read and write.'
+      : 'GitHub رفض الطلب. تأكد من صلاحيات المفتاح.';
+    if (status === 404) return 'ما لقيت الريبو. تأكد من الاسم، وإن المفتاح له صلاحية عليه.';
+    return 'صار خطأ من GitHub (' + status + '). جرب مرة ثانية.';
+  }
+
+  const repoPath = () => `/repos/${encodeURIComponent(state.cfg.owner)}/${encodeURIComponent(state.cfg.repo)}`;
+
+  async function checkRepo() {
+    const res = await gh(repoPath());
+    if (!res.ok) throw new GhError(res.status, errorFor(res.status, 'repo'));
+    const j = await res.json();
+    if (!j.private) throw new GhError(-1, 'هذا الريبو عام، يعني أي أحد يقدر يشوف أشياءك. خله Private وارجع.');
+  }
+
+  async function readData() {
+    if (state.cfg.demo) return { items: demoLoad(), sha: 'demo' };
+    const res = await gh(`${repoPath()}/contents/${FILE}`);
+    if (res.status === 404) return { items: [], sha: null };           // no file yet: first save creates it
+    if (!res.ok) throw new GhError(res.status, errorFor(res.status, 'read'));
+    const j = await res.json();
+    let parsed;
+    try { parsed = JSON.parse(decode(j.content || '')); } catch { parsed = { items: [] }; }
+    return { items: Array.isArray(parsed.items) ? parsed.items : [], sha: j.sha };
+  }
+
+  async function writeData(items, sha, message) {
+    if (state.cfg.demo) { demoSave(items); return { sha: 'demo' }; }
+    const body = { message, content: encode(JSON.stringify({ version: 1, items }, null, 2) + '\n') };
+    if (sha) body.sha = sha;
+    const res = await gh(`${repoPath()}/contents/${FILE}`, { method: 'PUT', body: JSON.stringify(body) });
+    if (res.status === 409 || res.status === 422) return { conflict: true };
+    if (!res.ok) throw new GhError(res.status, errorFor(res.status, 'write'));
+    const j = await res.json();
+    return { sha: j.content.sha };
+  }
+
+  // Apply a change on top of the latest data; if another device saved first, re-read and retry.
+  async function mutate(change, message) {
+    let items = state.items, sha = state.sha;
+    for (let attempt = 0; attempt < 3; attempt++) {
+      const next = change(items.slice());
+      const r = await writeData(next, sha, message);
+      if (!r.conflict) { state.items = next; state.sha = r.sha; return; }
+      ({ items, sha } = await readData());
+    }
+    throw new GhError(409, 'الملف تغير من جهاز ثاني. حدّث الصفحة وجرب.');
+  }
+
+  /* ---------- UI helpers ---------- */
+  let toastTimer;
+  function toast(msg, bad = false) {
+    const t = $('toast');
+    t.textContent = msg;
+    t.classList.toggle('bad', bad);
+    t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.remove('show'), bad ? 4000 : 1800);
+  }
+  function show(screen) {
+    $('loading').hidden = screen !== 'loading';
+    $('lock').hidden = screen !== 'lock';
+    $('app').hidden = screen !== 'app';
+  }
+  const newId = () => (crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36) + Math.random().toString(36).slice(2));
+  const fmtDate = new Intl.DateTimeFormat('ar-u-ca-gregory-nu-latn', { day: 'numeric', month: 'short', year: 'numeric' });
+
+  function normalizeUrl(raw) {
+    const s = raw.trim();
+    if (!s) return '';
+    const withScheme = /^[a-z][a-z0-9+.-]*:/i.test(s) ? s : 'https://' + s;
+    try {
+      const u = new URL(withScheme);
+      return (u.protocol === 'http:' || u.protocol === 'https:') ? u.href : null;
+    } catch { return null; }
+  }
+  const prettyUrl = (href) => { try { const u = new URL(href); return (u.host + u.pathname + u.search).replace(/\/$/, ''); } catch { return href; } };
+
+  /* ---------- render ---------- */
+  function render() {
+    const list = $('list');
+    list.replaceChildren();
+    const all = [...state.items].sort((a, b) => (b.createdAt || '').localeCompare(a.createdAt || ''));
+    const shown = state.filter === 'all' ? all : all.filter((i) => i.type === state.filter);
+    $('count').textContent = state.items.length ? String(state.items.length) : '';
+
+    for (const it of shown) {
+      const li = document.createElement('li');
+      li.className = it.id === state.fresh ? 'item fresh' : 'item';
+      li.dataset.type = TYPES[it.type] ? it.type : 'info';
+
+      const body = document.createElement('div');
+      body.className = 'item-body';
+
+      const meta = document.createElement('div');
+      meta.className = 'item-meta';
+      const tp = document.createElement('span');
+      tp.className = 'item-type';
+      tp.textContent = TYPES[it.type] || 'معلومة';
+      meta.append(tp);
+      if (it.createdAt) {
+        const tm = document.createElement('time');
+        tm.dateTime = it.createdAt;
+        tm.textContent = fmtDate.format(new Date(it.createdAt));
+        meta.append(tm);
+      }
+      body.append(meta);
+
+      if (it.title) { const h = document.createElement('h3'); h.textContent = it.title; body.append(h); }
+      const href = it.url ? normalizeUrl(it.url) : '';
+      if (href) {
+        const a = document.createElement('a');
+        a.href = href; a.target = '_blank'; a.rel = 'noopener noreferrer';
+        a.textContent = prettyUrl(href);
+        body.append(a);
+      }
+      if (it.note) { const p = document.createElement('p'); p.textContent = it.note; body.append(p); }
+
+      const del = document.createElement('button');
+      del.type = 'button'; del.className = 'del'; del.textContent = 'حذف';
+      del.addEventListener('click', () => onDelete(it, del));
+
+      li.append(body, del);
+      list.append(li);
+    }
+
+    const empty = $('empty');
+    if (!all.length) { empty.textContent = 'ما فيه شي محفوظ. ضيف أول شي من فوق.'; empty.hidden = false; }
+    else if (!shown.length) { empty.textContent = 'ما فيه شي من هذا النوع.'; empty.hidden = false; }
+    else empty.hidden = true;
+  }
+
+  /* ---------- actions ---------- */
+  async function open(cfg, { verify }) {
+    state.cfg = cfg;
+    if (verify) await checkRepo();
+    const d = await readData();
+    state.items = d.items; state.sha = d.sha;
+    render();
+    show('app');
+  }
+
+  function showLock(msg = '') {
+    const c = loadCfg() || {};
+    const guess = location.hostname.endsWith('.github.io') ? location.hostname.split('.')[0] : '';
+    $('owner').value = c.owner || guess;
+    if (c.repo) $('repo').value = c.repo;
+    $('token').value = '';
+    $('lockError').textContent = msg;
+    show('lock');
+  }
+
+  $('lockForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const cfg = { owner: $('owner').value.trim(), repo: $('repo').value.trim(), token: $('token').value.trim() };
+    if (!cfg.owner || !cfg.repo || !cfg.token) return;
+    const btn = $('unlockBtn');
+    btn.disabled = true; btn.textContent = 'يفتح…'; $('lockError').textContent = '';
+    try {
+      await open(cfg, { verify: true });
+      saveCfg(cfg);
+    } catch (err) {
+      state.cfg = null;
+      $('lockError').textContent = err.message || 'صار خطأ. جرب مرة ثانية.';
+    } finally {
+      btn.disabled = false; btn.textContent = 'افتح';
+    }
+  });
+
+  $('lockBtn').addEventListener('click', () => {
+    const c = loadCfg();
+    if (c) saveCfg({ owner: c.owner, repo: c.repo });   // keep names, forget the key
+    state.cfg = null; state.items = []; state.sha = null;
+    $('list').replaceChildren();
+    showLock();
+  });
+
+  $('addForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (state.busy) return;
+    const type = document.querySelector('input[name=type]:checked').value;
+    const title = $('fTitle').value.trim();
+    const rawUrl = $('fUrl').value.trim();
+    const note = $('fNote').value.trim();
+    const url = normalizeUrl(rawUrl);
+    if (url === null) { toast('اللينك مو صحيح.', true); $('fUrl').focus(); return; }
+    if (!title && !url && !note) { toast('اكتب عنوان أو لينك على الأقل.', true); $('fTitle').focus(); return; }
+
+    const item = {
+      id: newId(), type,
+      title: title || (url ? new URL(url).host.replace(/^www\./, '') : note.slice(0, 40)),
+      url, note, createdAt: new Date().toISOString(),
+    };
+
+    state.busy = true;
+    const btn = $('saveBtn'); btn.disabled = true; btn.textContent = 'يحفظ…';
+    try {
+      await mutate((items) => [...items, item], 'إضافة: ' + item.title);
+      $('fTitle').value = ''; $('fUrl').value = ''; $('fNote').value = '';
+      state.fresh = item.id;
+      render();
+      state.fresh = null;
+      toast('انحفظ');
+    } catch (err) {
+      if (err.status === 401) return showLock(err.message);
+      toast(err.message || 'ما انحفظ. جرب مرة ثانية.', true);
+    } finally {
+      state.busy = false; btn.disabled = false; btn.textContent = 'احفظ';
+    }
+  });
+
+  async function onDelete(item, btn) {
+    if (!btn.classList.contains('armed')) {
+      btn.classList.add('armed'); btn.textContent = 'متأكد؟';
+      setTimeout(() => { btn.classList.remove('armed'); btn.textContent = 'حذف'; }, 3000);
+      return;
+    }
+    if (state.busy) return;
+    state.busy = true; btn.disabled = true; btn.textContent = 'يحذف…';
+    try {
+      await mutate((items) => items.filter((i) => i.id !== item.id), 'حذف: ' + (item.title || item.id));
+      render();
+      toast('انحذف');
+    } catch (err) {
+      if (err.status === 401) return showLock(err.message);
+      toast(err.message || 'ما انحذف. جرب مرة ثانية.', true);
+      btn.disabled = false; btn.textContent = 'حذف'; btn.classList.remove('armed');
+    } finally {
+      state.busy = false;
+    }
+  }
+
+  $('filters').addEventListener('click', (e) => {
+    const b = e.target.closest('.chip');
+    if (!b) return;
+    state.filter = b.dataset.f;
+    for (const c of $('filters').children) c.setAttribute('aria-pressed', String(c === b));
+    render();
+  });
+
+  // Coming back to the tab (e.g. after saving from the phone) pulls the latest.
+  document.addEventListener('visibilitychange', async () => {
+    if (document.visibilityState !== 'visible' || !state.cfg || state.busy || $('app').hidden) return;
+    try { const d = await readData(); state.items = d.items; state.sha = d.sha; render(); } catch {}
+  });
+
+  /* ---------- start ---------- */
+  const saved = loadCfg();
+  if (PREVIEW) {
+    $('lockBtn').hidden = true;
+    $('previewNote').hidden = false;
+    open({ demo: true }, { verify: false });
+  } else if (saved && saved.token) {
+    open(saved, { verify: false }).catch((err) => showLock(err.message));
+  } else {
+    showLock();
+  }
+})();
+</script>
+</body>
+</html>
