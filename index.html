@@ -1,726 +1,122 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="robots" content="noindex, nofollow">
-<meta name="color-scheme" content="light dark">
-<meta name="theme-color" content="#F3F4F1" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#14181A" media="(prefers-color-scheme: dark)">
-<meta name="apple-mobile-web-app-title" content="لفتة">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="mobile-web-app-capable" content="yes">
-<link rel="apple-touch-icon" href="icon.png">
-<link rel="icon" href="icon.png">
-<title>لفتة</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;700&display=swap" rel="stylesheet">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow"><meta name="referrer" content="no-referrer">
+<meta name="theme-color" content="#f5f4ef"><meta name="apple-mobile-web-app-title" content="لفتة"><meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="icon" href="icon.png"><link rel="apple-touch-icon" href="icon.png">
+<title>لفتة — أشياؤك، في مكان واحد</title>
 <style>
-  :root {
-    --paper: #F3F4F1;
-    --surface: #FFFFFF;
-    --ink: #1E2629;
-    --muted: #6E7B7F;
-    --line: #DDE1DC;
-    --brass: #A9823A;
-    --on-ink: #F3F4F1;
-    --danger: #A8402F;
-    --note-bg: #F7F1E4;
-    --note-ink: #6B5223;
-    --backdrop: rgba(20, 24, 26, .38);
-
-    --t-link: #2E6A88;  --t-place: #3C7A57;  --t-info: #A9823A;  --t-data: #765B8C;
-    --t-idea: #B4553A;  --t-book: #4B5E9C;   --t-person: #2F7F86; --t-product: #8A6A4F;
-
-    --r-sm: 8px;
-    --r-md: 14px;
-  }
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --paper: #14181A;
-      --surface: #1C2225;
-      --ink: #E6EAE8;
-      --muted: #8E9B9F;
-      --line: #2B3337;
-      --brass: #C9A45C;
-      --on-ink: #14181A;
-      --danger: #E07A66;
-      --note-bg: #2A2519;
-      --note-ink: #D9BE86;
-      --backdrop: rgba(0, 0, 0, .6);
-
-      --t-link: #6FA9C9;  --t-place: #74B48F;  --t-info: #D2AE68;  --t-data: #AE93C4;
-      --t-idea: #E08C70;  --t-book: #8B9BD6;   --t-person: #6BBCC2; --t-product: #C2A285;
-    }
-  }
-
-  * { box-sizing: border-box; }
-  html, body { margin: 0; }
-  body {
-    background: var(--paper); color: var(--ink);
-    font: 400 16px/1.6 "IBM Plex Sans Arabic", system-ui, sans-serif;
-    -webkit-font-smoothing: antialiased; min-height: 100vh;
-    -webkit-tap-highlight-color: transparent;
-  }
-  button, input, textarea { font: inherit; color: inherit; }
-  [hidden] { display: none !important; }
-  :focus-visible { outline: 2px solid var(--brass); outline-offset: 2px; }
-
-  input[type=text], input[type=password], input[type=url], input[type=search], textarea {
-    width: 100%; padding: 12px 14px; background: var(--surface);
-    border: 1px solid var(--line); border-radius: var(--r-sm); outline: none;
-    transition: border-color .15s;
-  }
-  input:focus, textarea:focus { border-color: var(--ink); }
-  input[dir=ltr] { text-align: left; }
-  textarea { resize: vertical; min-height: 84px; }
-
-  .btn {
-    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-    padding: 12px 22px; border-radius: var(--r-sm); border: 1px solid var(--ink);
-    background: var(--ink); color: var(--on-ink); font-weight: 500; cursor: pointer;
-  }
-  .btn:disabled { opacity: .55; cursor: progress; }
-  .btn-wide { width: 100%; }
-  .btn-quiet { background: transparent; color: var(--ink); border-color: var(--line); }
-
-  /* ---------- Lock ---------- */
-  #lock { min-height: 100vh; display: grid; place-items: center; padding: 32px 18px; }
-  .lock-inner { width: 100%; max-width: 380px; }
-  .keyhole { display: block; width: 56px; height: 56px; margin: 0 0 28px; color: var(--brass); }
-  .lock-title { font-size: 64px; line-height: 1; font-weight: 700; margin: 0 0 12px; letter-spacing: -0.5px; }
-  .lock-sub { color: var(--muted); margin: 0 0 32px; }
-  label.field { display: block; margin-bottom: 16px; }
-  .field-name { display: block; font-size: 14px; font-weight: 500; margin-bottom: 6px; }
-  .field-hint { display: block; font-size: 13px; color: var(--muted); margin-top: 4px; }
-  .key-wrap { position: relative; display: block; }
-  .key-wrap input { padding-left: 76px; }
-  .key-toggle {
-    position: absolute; left: 6px; top: 50%; transform: translateY(-50%);
-    background: none; border: 0; color: var(--muted); font-size: 13px; padding: 6px 10px; cursor: pointer; border-radius: var(--r-sm);
-  }
-  .error { color: var(--danger); font-size: 14px; margin: 12px 0 0; min-height: 1.6em; }
-
-  /* ---------- App ---------- */
-  .wrap { max-width: 760px; margin: 0 auto; padding: 22px 16px 120px; }
-  header.top { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 16px; }
-  .app-title { font-size: 30px; font-weight: 700; margin: 0; line-height: 1.2; }
-  .count { color: var(--muted); font-size: 14px; font-weight: 400; margin-inline-start: 8px; }
-  .lock-btn { padding: 7px 14px; font-size: 14px; }
-  .preview-note { margin: -4px 0 16px; padding: 10px 14px; border-radius: var(--r-sm); font-size: 14px; background: var(--note-bg); color: var(--note-ink); }
-
-  .search { position: relative; margin-bottom: 12px; }
-  .search input { padding-inline-start: 40px; background: var(--surface); }
-  .search svg { position: absolute; inset-inline-start: 13px; top: 50%; transform: translateY(-50%); width: 18px; height: 18px; color: var(--muted); pointer-events: none; }
-  input[type=search]::-webkit-search-cancel-button { -webkit-appearance: none; }
-  .search-clear {
-    position: absolute; inset-inline-end: 6px; top: 50%; transform: translateY(-50%);
-    background: none; border: 0; color: var(--muted); font-size: 13px; padding: 6px 10px; cursor: pointer;
-  }
-
-  .filters {
-    display: flex; gap: 6px; overflow-x: auto; margin: 0 -16px 16px; padding: 2px 16px 4px;
-    scrollbar-width: none;
-  }
-  .filters::-webkit-scrollbar { display: none; }
-  .chip {
-    flex: 0 0 auto; border: 1px solid var(--line); background: transparent; border-radius: 999px;
-    padding: 5px 14px; font-size: 14px; cursor: pointer; white-space: nowrap;
-  }
-  .chip .n { color: var(--muted); margin-inline-start: 4px; font-size: 13px; }
-  .chip[aria-pressed=true] { background: var(--ink); border-color: var(--ink); color: var(--on-ink); }
-  .chip[aria-pressed=true] .n { color: inherit; opacity: .7; }
-
-  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(158px, 1fr)); gap: 10px; }
-  .card {
-    position: relative; display: flex; flex-direction: column; gap: 4px; min-width: 0;
-    background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-md);
-    padding: 14px 14px 14px; cursor: pointer; text-align: start; overflow: hidden;
-  }
-  .card::before { content: ""; position: absolute; inset: 0 0 auto 0; height: 3px; background: var(--tc); }
-  .card:active { transform: scale(.985); }
-  .card-meta { display: flex; justify-content: space-between; gap: 8px; font-size: 12.5px; color: var(--muted); }
-  .card-type { color: var(--tc); font-weight: 500; }
-  .card h3 {
-    margin: 2px 0 0; font-size: 16px; font-weight: 500; line-height: 1.45; overflow-wrap: anywhere;
-    display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
-  }
-  .card-link {
-    display: block; color: var(--t-link); font-size: 13px; text-decoration: none; direction: ltr; text-align: right;
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 2px 0;
-  }
-  .card-link:hover { text-decoration: underline; }
-  .card-note {
-    margin: 2px 0 0; font-size: 14px; color: var(--muted); white-space: pre-wrap; overflow-wrap: anywhere;
-    display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden;
-  }
-  .card.fresh { animation: in .35s ease-out; }
-
-  [data-type=link] { --tc: var(--t-link); }   [data-type=place] { --tc: var(--t-place); }
-  [data-type=info] { --tc: var(--t-info); }   [data-type=data] { --tc: var(--t-data); }
-  [data-type=idea] { --tc: var(--t-idea); }   [data-type=book] { --tc: var(--t-book); }
-  [data-type=person] { --tc: var(--t-person); } [data-type=product] { --tc: var(--t-product); }
-
-  .empty { color: var(--muted); padding: 48px 12px; text-align: center; }
-
-  .add {
-    position: fixed; left: 50%; transform: translateX(-50%);
-    bottom: calc(22px + env(safe-area-inset-bottom)); z-index: 5;
-    padding: 14px 30px; border-radius: 999px; font-size: 16px;
-    box-shadow: 0 6px 20px rgba(0,0,0,.18);
-  }
-  .add svg { width: 18px; height: 18px; }
-
-  /* ---------- Sheet ---------- */
-  dialog.sheet {
-    padding: 0; border: 0; margin: auto auto 0; width: 100%; max-width: 620px; max-height: 92vh;
-    background: var(--paper); color: var(--ink); border-radius: 18px 18px 0 0;
-  }
-  dialog.sheet::backdrop { background: var(--backdrop); }
-  dialog.sheet[open] { animation: up .22s ease-out; }
-  @media (min-width: 700px) { dialog.sheet { margin: auto; border-radius: 18px; } }
-  .sheet-form { padding: 10px 18px calc(18px + env(safe-area-inset-bottom)); }
-  .grabber { width: 40px; height: 4px; border-radius: 4px; background: var(--line); margin: 0 auto 10px; }
-  .sheet-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
-  .sheet-head h2 { margin: 0; font-size: 20px; font-weight: 700; }
-  .x-btn { background: none; border: 0; color: var(--muted); font-size: 14px; padding: 6px 8px; cursor: pointer; border-radius: var(--r-sm); }
-  .types { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 14px; }
-  .types input { position: absolute; opacity: 0; pointer-events: none; }
-  .types label {
-    display: block; text-align: center; padding: 8px 2px; border-radius: var(--r-sm);
-    border: 1px solid var(--line); font-size: 14px; cursor: pointer; user-select: none; background: var(--surface);
-  }
-  .types label:has(input:checked) { border-color: var(--tc); color: var(--tc); font-weight: 700; background: color-mix(in srgb, var(--tc) 10%, var(--surface)); }
-  .types label:has(input:focus-visible) { outline: 2px solid var(--brass); outline-offset: 2px; }
-  .row { margin-bottom: 10px; }
-  .sheet-actions { display: flex; align-items: center; gap: 8px; margin-top: 6px; }
-  .sheet-actions .btn { flex: 0 0 auto; }
-  .del {
-    margin-inline-start: auto; background: none; border: 0; color: var(--muted);
-    font-size: 14px; padding: 10px 8px; cursor: pointer; border-radius: var(--r-sm);
-  }
-  .del.armed { color: var(--danger); font-weight: 500; }
-
-  .toast {
-    position: fixed; inset-inline: 0; bottom: calc(92px + env(safe-area-inset-bottom)); margin: 0 auto; width: max-content; max-width: calc(100% - 36px);
-    background: var(--ink); color: var(--on-ink); padding: 10px 18px; border-radius: 999px; font-size: 14px; z-index: 20;
-    opacity: 0; transform: translateY(8px); transition: opacity .2s, transform .2s; pointer-events: none;
-  }
-  .toast.show { opacity: 1; transform: none; }
-  .toast.bad { background: var(--danger); color: #fff; }
-
-  .loading { min-height: 100vh; display: grid; place-items: center; color: var(--muted); }
-
-  @keyframes in { from { opacity: 0; transform: translateY(-6px); } }
-  @keyframes up { from { transform: translateY(24px); opacity: .6; } }
-  @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+:root{color-scheme:light;--bg:#f5f4ef;--surface:#fffefa;--text:#253c36;--sub:#78827b;--line:#e4e6de;--green:#345e4f;--soft:#e9eee6;--gold:#b69a6c;--danger:#ac4b43;--shadow:0 12px 50px #243a3310}
+:root[data-theme=dark]{color-scheme:dark;--bg:#161e1b;--surface:#1e2924;--text:#ecf0e7;--sub:#a3b2a7;--line:#354138;--green:#a4c5ab;--soft:#2b3d31;--gold:#d4ba8e;--danger:#f39c91;--shadow:0 12px 50px #0002}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:16px/1.75 Tahoma,Arial,sans-serif}button,input,textarea,select{font:inherit;color:inherit}button,a,input,textarea,select{-webkit-tap-highlight-color:transparent}button,a{touch-action:manipulation}button{cursor:pointer}button:disabled{opacity:.5;cursor:wait}a{color:var(--green)}[hidden]{display:none!important}:focus-visible{outline:3px solid var(--gold);outline-offset:3px}button{border:0}h1,h2,h3,p{margin-top:0}h1,h2,h3{line-height:1.5}h1{font-size:30px;letter-spacing:-1px}h2{font-size:22px}h3{font-size:18px}small,.muted{color:var(--sub)}input,select,textarea{width:100%;min-width:0;border:1px solid var(--line);background:var(--surface);padding:12px 14px;border-radius:12px;outline:none}input:focus,textarea:focus,select:focus{border-color:var(--green)}textarea{resize:vertical;min-height:130px;line-height:1.9}label{display:block;font-size:14px}label>span{display:block;margin-bottom:6px}input[type=checkbox]{width:18px;height:18px;accent-color:var(--green)}.check{display:flex;gap:10px;align-items:center}.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:11px 19px;min-height:44px;border-radius:12px;background:var(--green);color:var(--bg);font-weight:700;text-decoration:none}.quiet{background:var(--surface);color:var(--text);border:1px solid var(--line)}.ghost{background:transparent;color:var(--sub);padding:9px 12px;border-radius:10px;min-height:44px}.ghost:hover,.quiet:hover{background:var(--soft)}.danger{color:var(--danger)}.icon{width:20px;height:20px;flex-shrink:0;vertical-align:middle;fill:none;stroke:currentColor;stroke-width:1.65;stroke-linecap:round;stroke-linejoin:round}.large-icon{width:30px;height:30px}.eyebrow{font-size:12px;color:var(--sub);letter-spacing:2px}.brand{display:flex;gap:11px;align-items:center}.brand-symbol{display:grid;place-items:center;width:43px;height:43px;border-radius:15px;background:var(--green);color:var(--bg);font-size:28px}.brand strong{font-size:26px}.brand small{display:block;font-size:11px;letter-spacing:2px;line-height:1}.line{border:0;border-top:1px solid var(--line);margin:24px 0}.loading{min-height:100dvh;display:grid;place-content:center;text-align:center;gap:16px}.lock{max-width:1120px;margin:auto;min-height:100dvh;display:grid;grid-template-columns:1.15fr 1fr;align-items:center;gap:100px;padding:60px 40px}.lock-intro h1{font-size:48px;max-width:550px;line-height:1.5;margin:34px 0 18px}.lock-intro p{color:var(--sub);max-width:420px;font-size:18px}.lock-tags{display:flex;gap:9px;flex-wrap:wrap;margin-top:30px}.lock-tags span{border:1px solid var(--line);border-radius:30px;padding:5px 13px;font-size:13px}.lock-card{background:var(--surface);padding:32px;border:1px solid var(--line);border-radius:24px;box-shadow:var(--shadow)}.lock-card h2{margin-bottom:6px}.lock-card label{margin-top:15px}.lock-card .btn{width:100%;margin-top:22px}.key-wrap{display:flex;gap:6px}.key-wrap input{text-align:left;direction:ltr}.error{font-size:13px;color:var(--danger);white-space:pre-wrap;margin:12px 0 0}.layout{display:grid;grid-template-columns:240px minmax(0,1fr);min-height:100dvh}.sidebar{position:sticky;top:0;height:100dvh;padding:30px 22px;border-left:1px solid var(--line);display:flex;flex-direction:column;gap:26px;background:var(--surface)}.nav{display:grid;gap:7px}.nav button{display:flex;align-items:center;gap:12px;text-align:right;padding:12px 15px;background:transparent;border-radius:12px;color:var(--sub)}.nav button.active{color:var(--green);background:var(--soft);font-weight:700}.nav .badge{margin-inline-start:auto;font-size:12px}.side-note{margin-top:auto;padding:16px;border:1px solid var(--line);border-radius:16px;font-size:12px;color:var(--sub)}.side-note strong{display:block;color:var(--text);font-size:13px;margin-bottom:6px}.main{padding:28px 40px 90px;max-width:1500px;width:100%;margin:auto}.topbar{display:flex;align-items:center;justify-content:space-between;gap:15px;padding-bottom:26px;border-bottom:1px solid var(--line)}.topbar .brand{display:none}.top-actions{display:flex;gap:6px;align-items:center}.sync-label{font-size:12px;color:var(--sub)}.hero{padding:38px 0 25px;display:flex;align-items:center;justify-content:space-between;gap:20px}.hero h1{margin:8px 0}.hero p{color:var(--sub);margin:0;font-size:14px}.total{width:85px;height:85px;display:grid;place-content:center;text-align:center;border:1px solid var(--line);border-radius:50%;flex-shrink:0}.total strong{font-size:26px;font-weight:500;line-height:1.3}.total span{font-size:11px;color:var(--sub)}.searchbox{display:flex;align-items:center;gap:12px;padding:0 16px;background:var(--surface);border:1px solid var(--line);border-radius:15px}.searchbox input{border:0;background:transparent;padding:15px 0}.searchbox input:focus{outline:0}.searchbox:focus-within{outline:2px solid var(--green)}.searchbox button{background:none;color:var(--sub);min-width:38px;min-height:40px}.filters{display:flex;gap:8px;margin:16px 0;overflow-x:auto;padding-bottom:6px;scrollbar-width:thin}.chip{display:flex;align-items:center;gap:7px;flex-shrink:0;border:1px solid var(--line);padding:7px 14px;border-radius:28px;background:transparent;color:var(--sub);font-size:13px;min-height:40px}.chip.active{background:var(--text);color:var(--bg);border-color:var(--text)}.tools{display:flex;justify-content:space-between;gap:12px;align-items:center;margin:18px 0 24px;flex-wrap:wrap}.tools-left{display:flex;gap:8px;flex-wrap:wrap}.tools select,.tools input{width:auto;padding:7px 11px;min-height:40px;font-size:12px}.tools label{display:flex;align-items:center;gap:6px;font-size:12px}.section-head{display:flex;align-items:center;gap:9px;margin:25px 0 15px}.section-head h2{font-size:15px;margin:0}.section-head span{font-size:12px;color:var(--sub)}.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}.card{border:1px solid var(--line);background:var(--surface);border-radius:19px;padding:19px;display:flex;flex-direction:column;min-width:0;box-shadow:0 3px 10px #243a3303;transition:transform .2s,border-color .2s}.card:hover{transform:translateY(-3px);border-color:var(--gold)}.card-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px;gap:5px}.type-icon{display:flex;align-items:center;gap:8px;color:var(--accent,var(--green));font-size:12px}.type-icon>span:first-child{display:grid;place-items:center;width:34px;height:34px;background:var(--soft);border-radius:11px}.favorite{background:transparent;color:var(--sub);padding:7px;border-radius:9px}.favorite.on{color:var(--gold)}.favorite.on .icon{fill:currentColor}.card-open{background:transparent;padding:0;text-align:right;width:100%;flex:1}.card h3{margin-bottom:8px;overflow-wrap:anywhere;font-size:17px}.excerpt{font-size:13px;line-height:1.9;color:var(--sub);display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;white-space:pre-wrap;overflow-wrap:anywhere;min-height:46px;margin-bottom:18px}.card-foot{display:flex;justify-content:space-between;align-items:center;gap:8px;padding-top:13px;border-top:1px solid var(--line);font-size:11px;color:var(--sub)}.domain{background:var(--soft);color:var(--green);padding:2px 8px;border-radius:5px}.tags{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:13px}.tag{font-size:11px;color:var(--sub);background:var(--bg);padding:1px 6px;border-radius:4px}.empty{padding:60px 20px;text-align:center;border:1px dashed var(--line);border-radius:20px;color:var(--sub)}.empty .icon{width:40px;height:40px;margin-bottom:12px}.empty h2{color:var(--text);font-size:19px;margin-bottom:8px}.empty p{font-size:14px}.empty .btn{margin-top:12px}.mobile-nav{display:none}.notice{background:var(--soft);padding:11px 15px;border-radius:12px;font-size:13px;margin-top:16px}.settings{max-width:700px}.settings-card{padding:24px;background:var(--surface);border:1px solid var(--line);border-radius:18px;margin-bottom:16px}.settings-card h2{font-size:17px}.settings-card p{font-size:13px;color:var(--sub)}.setting-row{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:13px 0;border-bottom:1px solid var(--line)}.setting-row:last-child{border:0}.setting-row select{width:140px}.setting-row span{font-size:14px}.setting-row small{display:block;font-size:12px}.settings .btn{font-size:13px}.connection{direction:ltr;text-align:right;overflow-wrap:anywhere;font-family:monospace}
+dialog{border:1px solid var(--line);background:var(--surface);color:var(--text);border-radius:23px;padding:0;width:min(670px,calc(100% - 30px));max-height:90dvh;box-shadow:var(--shadow)}dialog::backdrop{background:#12231db3;backdrop-filter:blur(5px)}.modal-head{display:flex;justify-content:space-between;align-items:center;padding:20px 24px;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:3;background:var(--surface)}.modal-head h2{font-size:19px;margin:0}.modal-body{padding:24px}.modal-foot{position:sticky;bottom:0;background:var(--surface);padding:16px 24px;border-top:1px solid var(--line);display:flex;gap:8px;align-items:center;flex-wrap:wrap}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:17px}.full{grid-column:1/-1}.form-note{font-size:12px;color:var(--sub);margin-bottom:18px}.type-picker{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.type-choice{background:var(--bg);border:1px solid var(--line);border-radius:13px;padding:13px 5px;display:grid;gap:5px;place-items:center;font-size:12px}.type-choice.active{border-color:var(--green);background:var(--soft);color:var(--green)}.type-choice .icon{width:25px;height:25px}.field-heading{font-size:14px;margin:8px 0 0;color:var(--green);grid-column:1/-1}.reader-title{font-size:27px;overflow-wrap:anywhere;margin:12px 0 10px}.reader-note{white-space:pre-wrap;overflow-wrap:anywhere;line-height:2;font-size:15px;margin:24px 0}.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.detail{background:var(--bg);padding:12px 15px;border-radius:12px;min-width:0;overflow-wrap:anywhere}.detail small{display:block;font-size:11px}.detail span{font-size:14px}.related{display:flex;flex-wrap:wrap;gap:8px}.reader-actions{display:flex;gap:8px;flex-wrap:wrap}.reader-actions button{font-size:13px}.toast{position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:var(--text);color:var(--bg);padding:13px 20px;border-radius:14px;z-index:99;width:max-content;max-width:90vw;box-shadow:var(--shadow);font-size:14px}.toast.error-toast{background:var(--danger);color:white}.version{font-size:11px;text-align:center;color:var(--sub);margin-top:25px}
+@media(min-width:1500px){.grid{grid-template-columns:repeat(4,minmax(0,1fr))}}@media(max-width:1150px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.main{padding:25px}.layout{grid-template-columns:210px 1fr}.sidebar{padding:25px 16px}.lock{gap:45px}.lock-intro h1{font-size:38px}}
+@media(max-width:760px){.layout{display:block}.sidebar{display:none}.main{padding:20px 17px 125px}.topbar{padding-bottom:18px}.topbar .brand{display:flex}.topbar>.eyebrow{display:none}.brand strong{font-size:23px}.brand-symbol{width:36px;height:36px;border-radius:12px}.topbar .add-desktop{display:none}.sync-label{font-size:10px}.hero{padding:25px 0 20px}.hero h1{font-size:26px}.hero p{font-size:12px}.total{width:65px;height:65px}.total strong{font-size:22px}.eyebrow{font-size:10px}.grid{gap:11px}.card{padding:14px;border-radius:16px}.card h3{font-size:15px}.excerpt{font-size:12px}.card-foot{font-size:10px;flex-wrap:wrap}.type-icon{font-size:11px;gap:5px}.type-icon>span:first-child{width:29px;height:29px}.favorite{padding:4px;min-width:30px;min-height:34px}.filters{margin-left:-17px;margin-right:-17px;padding:0 17px 6px}.tools{margin-bottom:18px}.tools-left{gap:6px}.tools select,.tools input{max-width:145px}.mobile-nav{display:flex;align-items:center;justify-content:space-around;position:fixed;bottom:0;inset-inline:0;z-index:10;background:var(--surface);border-top:1px solid var(--line);padding:9px 9px calc(10px + env(safe-area-inset-bottom));box-shadow:0 -6px 30px #243a3307}.mobile-nav button{display:grid;justify-items:center;gap:2px;background:transparent;color:var(--sub);min-width:58px;font-size:10px;min-height:44px}.mobile-nav button.active{color:var(--green);font-weight:700}.mobile-nav .mobile-add{background:var(--green);color:var(--bg);border-radius:16px;width:54px;height:48px;min-width:54px;place-content:center}.mobile-add .icon{width:27px;height:27px}.lock{display:block;padding:30px 22px}.lock-intro h1{font-size:31px;margin:26px 0 12px}.lock-intro p{font-size:14px}.lock-tags{display:none}.lock-card{margin-top:28px;padding:23px}.lock-intro h1 br{display:none}dialog{width:100%;max-height:94dvh;margin:auto auto 0;border-radius:23px 23px 0 0}.modal-body{padding:20px}.modal-head{padding:18px 20px}.modal-foot{padding:14px 20px calc(14px + env(safe-area-inset-bottom))}.form-grid{gap:14px}.type-picker{grid-template-columns:repeat(3,1fr)}.reader-title{font-size:24px}.setting-row{flex-wrap:wrap}.toast{bottom:105px}.reader-actions{gap:3px}.reader-actions button{padding:8px;font-size:12px}.settings-card{padding:18px}}
+@media(max-width:370px){.grid{grid-template-columns:1fr}.form-grid,.detail-grid{grid-template-columns:1fr}.full{grid-column:auto}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
 </style>
 </head>
 <body>
-
-<div id="loading" class="loading">يفتح…</div>
-
-<!-- ============ Lock ============ -->
-<main id="lock" hidden>
-  <form class="lock-inner" id="lockForm" autocomplete="off">
-    <svg class="keyhole" viewBox="0 0 56 56" aria-hidden="true">
-      <circle cx="28" cy="28" r="27" fill="none" stroke="currentColor" stroke-width="1.5"/>
-      <circle cx="28" cy="23" r="7" fill="currentColor"/>
-      <path d="M24.5 26 L22 40 H34 L31.5 26 Z" fill="currentColor"/>
-    </svg>
-    <h1 class="lock-title">لفتة</h1>
-    <p class="lock-sub">افتح بمفتاح GitHub حقك.</p>
-
-    <label class="field">
-      <span class="field-name">اسم المستخدم في GitHub</span>
-      <input type="text" id="owner" dir="ltr" required spellcheck="false" autocapitalize="off">
-    </label>
-    <label class="field">
-      <span class="field-name">ريبو الداتا (الخاص)</span>
-      <input type="text" id="repo" dir="ltr" required spellcheck="false" autocapitalize="off" value="lafta-data">
-    </label>
-    <label class="field">
-      <span class="field-name">المفتاح</span>
-      <span class="key-wrap">
-        <input type="password" id="token" name="lafta-key" dir="ltr" required spellcheck="false" autocapitalize="off" autocomplete="off" placeholder="github_pat_…">
-        <button type="button" class="key-toggle" id="keyToggle" aria-pressed="false">إظهار</button>
-      </span>
-      <span class="field-hint">ينحفظ في هذا الجهاز بس.</span>
-    </label>
-
-    <button class="btn btn-wide" type="submit" id="unlockBtn">افتح</button>
-    <p class="error" id="lockError" role="alert"></p>
-  </form>
-</main>
-
-<!-- ============ App ============ -->
-<div id="app" hidden>
-  <div class="wrap">
-    <header class="top">
-      <h1 class="app-title">لفتة<span class="count" id="count"></span></h1>
-      <button class="btn btn-quiet lock-btn" id="lockBtn" type="button">قفل</button>
-    </header>
-    <p class="preview-note" id="previewNote" hidden>معاينة: اللي تضيفه هنا ينحفظ في هذا الجهاز بس. النسخة الحقيقية تحفظ في GitHub.</p>
-
-    <div class="search">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
-      <input type="search" id="q" placeholder="ابحث في أشيائك" aria-label="بحث" autocomplete="off" enterkeyhint="search">
-      <button type="button" class="search-clear" id="qClear" hidden>مسح</button>
-    </div>
-
-    <div class="filters" id="filters" role="group" aria-label="فلترة حسب النوع"></div>
-    <div class="grid" id="grid"></div>
-    <p class="empty" id="empty" hidden></p>
-  </div>
-
-  <button class="btn add" id="addBtn" type="button">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
-    أضف
-  </button>
+<div id="loading" class="loading"><div class="brand-symbol" style="margin:auto">ل</div><span>نفتح محفوظاتك…</span></div>
+<section id="lock" class="lock" hidden>
+ <div class="lock-intro"><div class="brand"><span class="brand-symbol">ل</span><div><strong>لفتة</strong><small>LAFTA</small></div></div><h1>لكل شيء يلفتك،<br> مكان ترجع له</h1><p>أشخاص، أفكار، دورات، ويوميات<br>تفاصيلك الصغيرة تستحق أن تبقى قريبة</p><div class="lock-tags"><span>أشخاص</span><span>دورات</span><span>أفكار</span><span>يوميات</span></div></div>
+ <form id="lockForm" class="lock-card"><span class="eyebrow">مكتبتك الشخصية</span><h2>أهلًا بعودتك</h2><p class="muted" style="font-size:13px">اتصل بمستودعك الخاص لفتح محفوظاتك</p><label><span>اسم مستخدم GitHub</span><input id="owner" dir="ltr" required autocapitalize="off" spellcheck="false" value="mohammedaabakhsh"></label><label><span>مستودع البيانات الخاص</span><input id="repo" dir="ltr" required autocapitalize="off" spellcheck="false" value="lafta-data"></label><label><span>مفتاح الوصول</span><div class="key-wrap"><input id="token" type="password" required dir="ltr" autocomplete="off" placeholder="github_pat_…"><button class="ghost" id="showKey" type="button">إظهار</button></div></label><label class="check"><input id="remember" type="checkbox" checked>تذكّر المفتاح على هذا الجهاز الشخصي</label><small style="font-size:11px">عند التفعيل، يُحفظ المفتاح في متصفح هذا الجهاز حتى تضغط «قفل»</small><button class="btn" id="unlock" type="submit">افتح لفتة</button><p id="lockError" class="error" role="alert"></p></form>
+</section>
+<div id="app" class="layout" hidden>
+ <aside class="sidebar"><div class="brand"><span class="brand-symbol">ل</span><div><strong>لفتة</strong><small>LAFTA</small></div></div><button class="btn" data-action="add"><span data-icon="plus"></span>إضافة جديدة</button><nav class="nav" id="sideNav"></nav><div class="side-note"><strong>تفاصيلك، أقرب إليك</strong>احفظها بطريقتك، وابحث عنها وقت ما تحتاجها</div><button class="ghost" data-action="lock"><span data-icon="lock"></span> قفل التطبيق</button></aside>
+ <main class="main"><header class="topbar"><span class="eyebrow">مكتبة التفاصيل التي تهمك</span><div class="brand"><span class="brand-symbol">ل</span><strong>لفتة</strong></div><div class="top-actions"><span id="syncLabel" class="sync-label"></span><button id="syncBtn" class="ghost" data-action="sync" aria-label="تحديث المحفوظات" title="تحديث المحفوظات"><span data-icon="refresh"></span></button><button class="btn add-desktop" data-action="add"><span data-icon="plus"></span>إضافة</button></div></header>
+ <div id="demoNotice" class="notice" hidden>معاينة تجريبية ببيانات افتراضية — لا تتصل بمستودعك</div>
+ <section class="hero"><div><span class="eyebrow" id="today"></span><h1 id="viewTitle">كل ما يهمك</h1><p id="viewSubtitle">أشياء تحفظها اليوم، وتحتاجها غدًا</p></div><div class="total" id="totalCircle"><strong id="total">0</strong><span>محفوظ</span></div></section>
+ <section id="library"><div class="searchbox"><span data-icon="search"></span><input id="search" type="search" placeholder="ابحث باسم شخص، فكرة، دورة…" aria-label="ابحث في محفوظاتك" autocomplete="off"><button id="clearSearch" aria-label="مسح البحث" hidden>×</button></div><div id="typeFilters" class="filters" aria-label="أنواع المحفوظات"></div><div class="tools"><div class="tools-left"><select id="domainFilter" aria-label="تصفية حسب المجال"></select><select id="sort" aria-label="ترتيب المحفوظات"><option value="new">الأحدث إضافة</option><option value="updated">آخر تعديل</option><option value="title">حسب الاسم</option></select><label>من <input id="fromDate" type="date" aria-label="تاريخ الإضافة من"></label></div><span id="results" class="muted" style="font-size:12px"></span></div><div id="pinnedSection" hidden><div class="section-head"><span data-icon="pin"></span><h2>قريب منك دائمًا</h2><span>المثبتة</span></div><div id="pinnedGrid" class="grid"></div></div><div class="section-head"><h2 id="listHeading">محفوظاتك</h2></div><div id="grid" class="grid"></div><div id="empty" class="empty" hidden></div></section>
+ <section id="settings" class="settings" hidden><div class="settings-card"><h2>مظهر يريحك</h2><div class="setting-row"><span>مظهر التطبيق<small>اختر ما يناسب إضاءة جهازك</small></span><select id="theme" aria-label="مظهر التطبيق"><option value="system">حسب الجهاز</option><option value="light">فاتح</option><option value="dark">داكن</option></select></div></div><div class="settings-card"><h2>الاتصال والمحفو‌ظات</h2><p id="connection" class="connection"></p><div class="setting-row"><span>نسخة احتياطية<small>تنزيل محفوظاتك، دون مفتاح الوصول</small></span><button class="btn quiet" data-action="export"><span data-icon="download"></span>تنزيل نسخة</button></div><div class="setting-row"><span>الأرشيف<small>عناصر تحتفظ بها خارج الصفحة الرئيسية</small></span><button class="ghost" data-view="archive">فتح الأرشيف ←</button></div><div class="setting-row"><span>سلة المحذوفات<small>يمكنك استعادة العناصر من هنا</small></span><button class="ghost" data-view="trash">فتح السلة ←</button></div><div class="setting-row"><span>قفل التطبيق<small>إزالة المفتاح من هذا الجهاز</small></span><button class="btn quiet" data-action="lock"><span data-icon="lock"></span>قفل</button></div></div><p class="version">لفتة · الإصدار 3</p></section>
+ </main><nav class="mobile-nav" aria-label="التنقل الرئيسي"><button data-view="home"><span data-icon="home"></span>الرئيسية</button><button data-view="favorites"><span data-icon="star"></span>المفضلة</button><button class="mobile-add" data-action="add" aria-label="إضافة جديدة"><span data-icon="plus"></span></button><button data-view="archive"><span data-icon="archive"></span>الأرشيف</button><button data-view="settings"><span data-icon="settings"></span>الإعدادات</button></nav>
 </div>
-
-<!-- ============ Add / edit sheet ============ -->
-<dialog class="sheet" id="sheet" aria-labelledby="sheetTitle">
-  <form class="sheet-form" id="sheetForm" novalidate autocomplete="off">
-    <div class="grabber" aria-hidden="true"></div>
-    <div class="sheet-head">
-      <h2 id="sheetTitle">إضافة</h2>
-      <button type="button" class="x-btn" id="sheetClose">إغلاق</button>
-    </div>
-    <div class="types" id="typeGrid" role="radiogroup" aria-label="النوع"></div>
-    <div class="row"><input type="text" id="fTitle" placeholder="العنوان" aria-label="العنوان"></div>
-    <div class="row"><input type="url" id="fUrl" dir="ltr" placeholder="https://" aria-label="اللينك (اختياري)" inputmode="url" autocapitalize="off" spellcheck="false"></div>
-    <div class="row"><textarea id="fNote" placeholder="ملاحظة (اختياري)" aria-label="ملاحظة"></textarea></div>
-    <div class="sheet-actions">
-      <button class="btn" type="submit" id="saveBtn">احفظ</button>
-      <button class="btn btn-quiet" type="button" id="cancelBtn">إلغاء</button>
-      <button class="del" type="button" id="delBtn" hidden>حذف</button>
-    </div>
-  </form>
-</dialog>
-
-<div class="toast" id="toast" role="status" aria-live="polite"></div>
-
+<dialog id="editor" aria-labelledby="editorTitle"><form id="editForm"><header class="modal-head"><h2 id="editorTitle">إضافة جديدة</h2><button type="button" class="ghost" data-close="editor" aria-label="إغلاق">×</button></header><div class="modal-body"><p class="form-note">ابدأ باسم أو ملاحظة، وبقية التفاصيل تقدر تضيفها لاحقًا</p><div id="typePicker" class="type-picker"></div><hr class="line"><div class="form-grid"><label class="full"><span id="titleLabel">العنوان</span><input id="fTitle" maxlength="300" placeholder="ما الذي تريد حفظه؟"></label><label><span>المجال</span><select id="fDomain"></select></label><label><span>وسوم</span><input id="fTags" placeholder="مثال: تعلم، جدة" maxlength="500"></label><div id="dynamicFields" class="form-grid full"></div><label class="full"><span id="noteLabel">ملاحظات وتفاصيل</span><textarea id="fNote" placeholder="اكتب ما يهمك…" maxlength="50000"></textarea></label><label class="full"><span>رابط إضافي</span><input id="fUrl" type="text" dir="ltr" inputmode="url" placeholder="https://" maxlength="3000"></label></div><p id="formError" class="error" role="alert"></p></div><footer class="modal-foot"><button class="btn" type="submit" id="saveBtn">حفظ</button><button class="btn quiet" type="button" data-close="editor">إلغاء</button><span id="saveHint" class="muted" style="font-size:11px">يحفظ في مستودعك الخاص</span></footer></form></dialog>
+<dialog id="reader" aria-labelledby="readerTitle"><header class="modal-head"><span id="readerType" class="type-icon"></span><button class="ghost" data-close="reader" aria-label="إغلاق">×</button></header><div id="readerBody" class="modal-body"></div><footer id="readerActions" class="modal-foot reader-actions"></footer></dialog>
+<div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
 <script>
-(() => {
-  const PREVIEW = false;   // true = try the app without GitHub (data stays on this device)
-  const API = 'https://api.github.com';
-  const FILE = 'data.json';
-  const STORE = 'lafta.v1';
-  const DEMO = 'lafta.demo';
-
-  // key, singular, plural
-  const TYPES = [
-    ['link', 'لينك', 'لينكات'], ['place', 'مكان', 'أماكن'], ['info', 'معلومة', 'معلومات'], ['data', 'داتا', 'داتا'],
-    ['idea', 'فكرة', 'أفكار'], ['book', 'كتاب', 'كتب'], ['person', 'شخص', 'أشخاص'], ['product', 'منتج', 'منتجات'],
-  ];
-  const TYPE = Object.fromEntries(TYPES.map(([k, s, p]) => [k, { s, p }]));
-  const typeOf = (it) => (TYPE[it.type] ? it.type : 'info');
-
-  const $ = (id) => document.getElementById(id);
-  const state = { cfg: null, items: [], sha: null, filter: 'all', query: '', busy: false, editing: null, fresh: null };
-
-  /* ---------- local config (per device) ---------- */
-  const loadCfg = () => { try { return JSON.parse(localStorage.getItem(STORE)); } catch { return null; } };
-  const saveCfg = (c) => { try { localStorage.setItem(STORE, JSON.stringify(c)); } catch {} };
-
-  /* ---------- preview storage (no GitHub) ---------- */
-  let memDemo = null;
-  function seed() {
-    const t = (d) => new Date(Date.now() - d * 86400000).toISOString();
-    return [
-      { id: 's1', type: 'place', title: 'الكورنيش الشمالي', url: 'https://maps.google.com/?q=Jeddah+North+Corniche', note: 'المشي وقت المغرب', createdAt: t(5) },
-      { id: 's2', type: 'link', title: 'Smashing Magazine', url: 'https://www.smashingmagazine.com', note: 'مقالات عن تصميم الواجهات', createdAt: t(4) },
-      { id: 's3', type: 'info', title: 'مفتاح GitHub ينحفظ في الجهاز بس', url: '', note: 'عشان كده ما ينحط في الكود', createdAt: t(3) },
-      { id: 's4', type: 'idea', title: 'زر حفظ من قائمة المشاركة', url: '', note: 'أحفظ أي لينك من أي تطبيق بضغطة', createdAt: t(2) },
-      { id: 's5', type: 'book', title: 'The Design of Everyday Things', url: '', note: 'Don Norman', createdAt: t(1) },
-      { id: 's6', type: 'data', title: 'مقاس الغرفة', url: '', note: '4 × 5 م', createdAt: t(0) },
-    ];
-  }
-  function demoLoad() {
-    try { const s = localStorage.getItem(DEMO); if (s) return JSON.parse(s); } catch {}
-    return memDemo || (memDemo = seed());
-  }
-  function demoSave(items) { memDemo = items; try { localStorage.setItem(DEMO, JSON.stringify(items)); } catch {} }
-
-  /* ---------- UTF-8 safe base64 (Arabic text) ---------- */
-  function encode(str) {
-    const bytes = new TextEncoder().encode(str);
-    let bin = '';
-    for (let i = 0; i < bytes.length; i += 0x8000) bin += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000));
-    return btoa(bin);
-  }
-  function decode(b64) {
-    const bin = atob(b64.replace(/\s/g, ''));
-    return new TextDecoder().decode(Uint8Array.from(bin, (c) => c.charCodeAt(0)));
-  }
-
-  /* ---------- GitHub API ---------- */
-  class GhError extends Error { constructor(status, msg) { super(msg); this.status = status; } }
-
-  async function gh(path, opts = {}) {
-    try {
-      return await fetch(API + path, {
-        ...opts,
-        cache: 'no-store',
-        headers: {
-          Authorization: 'Bearer ' + state.cfg.token,
-          Accept: 'application/vnd.github+json',
-          ...(opts.body ? { 'Content-Type': 'application/json' } : {}),
-        },
-      });
-    } catch {
-      throw new GhError(0, 'ما قدرت أتصل بـ GitHub. تأكد من النت.');
-    }
-  }
-
-  function errorFor(status, ctx) {
-    if (status === 401) return 'المفتاح غلط أو منتهي.';
-    if (status === 403) return ctx === 'write'
-      ? 'المفتاح ما عنده صلاحية كتابة. خلي Contents على Read and write.'
-      : 'GitHub رفض الطلب. تأكد من صلاحيات المفتاح.';
-    if (status === 404) return ctx === 'repo'
-      ? `المفتاح شغال، بس ما يشوف "${state.cfg.repo}". تأكد إنك لصقت المفتاح الجديد، وإنه مربوط بهذا الريبو.`
-      : 'ما لقيت الملف. تأكد إن المفتاح له صلاحية Contents.';
-    return 'صار خطأ من GitHub (' + status + '). جرب مرة ثانية.';
-  }
-
-  const repoPath = () => `/repos/${encodeURIComponent(state.cfg.owner)}/${encodeURIComponent(state.cfg.repo)}`;
-
-  async function checkRepo() {
-    const res = await gh(repoPath());
-    if (!res.ok) throw new GhError(res.status, errorFor(res.status, 'repo'));
-    const j = await res.json();
-    if (!j.private) throw new GhError(-1, 'هذا الريبو عام، يعني أي أحد يقدر يشوف أشياءك. خله Private وارجع.');
-  }
-
-  async function readData() {
-    if (state.cfg.demo) return { items: demoLoad(), sha: 'demo' };
-    const res = await gh(`${repoPath()}/contents/${FILE}`);
-    if (res.status === 404) return { items: [], sha: null };           // no file yet: first save creates it
-    if (!res.ok) throw new GhError(res.status, errorFor(res.status, 'read'));
-    const j = await res.json();
-    let parsed;
-    try { parsed = JSON.parse(decode(j.content || '')); } catch { parsed = { items: [] }; }
-    return { items: Array.isArray(parsed.items) ? parsed.items : [], sha: j.sha };
-  }
-
-  async function writeData(items, sha, message) {
-    if (state.cfg.demo) { demoSave(items); return { sha: 'demo' }; }
-    const body = { message, content: encode(JSON.stringify({ version: 1, items }, null, 2) + '\n') };
-    if (sha) body.sha = sha;
-    const res = await gh(`${repoPath()}/contents/${FILE}`, { method: 'PUT', body: JSON.stringify(body) });
-    if (res.status === 409 || res.status === 422) return { conflict: true };
-    if (!res.ok) throw new GhError(res.status, errorFor(res.status, 'write'));
-    const j = await res.json();
-    return { sha: j.content.sha };
-  }
-
-  // Apply a change on top of the latest data; if another device saved first, re-read and retry.
-  async function mutate(change, message) {
-    let items = state.items, sha = state.sha;
-    for (let attempt = 0; attempt < 3; attempt++) {
-      const next = change(items.slice());
-      const r = await writeData(next, sha, message);
-      if (!r.conflict) { state.items = next; state.sha = r.sha; return; }
-      ({ items, sha } = await readData());
-    }
-    throw new GhError(409, 'الملف تغير من جهاز ثاني. حدّث الصفحة وجرب.');
-  }
-
-  /* ---------- helpers ---------- */
-  let toastTimer;
-  function toast(msg, bad = false) {
-    const t = $('toast');
-    t.textContent = msg; t.classList.toggle('bad', bad); t.classList.add('show');
-    clearTimeout(toastTimer);
-    toastTimer = setTimeout(() => t.classList.remove('show'), bad ? 4000 : 1800);
-  }
-  function show(screen) {
-    $('loading').hidden = screen !== 'loading';
-    $('lock').hidden = screen !== 'lock';
-    $('app').hidden = screen !== 'app';
-  }
-  const newId = () => (crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36) + Math.random().toString(36).slice(2));
-  const fmtDate = new Intl.DateTimeFormat('ar-u-ca-gregory-nu-latn', { day: 'numeric', month: 'short' });
-  const fmtDateYear = new Intl.DateTimeFormat('ar-u-ca-gregory-nu-latn', { day: 'numeric', month: 'short', year: 'numeric' });
-  function dateLabel(iso) {
-    const d = new Date(iso);
-    return d.getFullYear() === new Date().getFullYear() ? fmtDate.format(d) : fmtDateYear.format(d);
-  }
-
-  function normalizeUrl(raw) {
-    const s = (raw || '').trim();
-    if (!s) return '';
-    const withScheme = /^[a-z][a-z0-9+.-]*:/i.test(s) ? s : 'https://' + s;
-    try {
-      const u = new URL(withScheme);
-      return (u.protocol === 'http:' || u.protocol === 'https:') ? u.href : null;
-    } catch { return null; }
-  }
-  const prettyUrl = (href) => { try { const u = new URL(href); return (u.host.replace(/^www\./, '') + u.pathname + u.search).replace(/\/$/, ''); } catch { return href; } };
-
-  // Arabic-aware search: ignore diacritics, tatweel, and alef/ta-marbuta/ya variants
-  const norm = (s) => (s || '').toLowerCase()
-    .replace(/[ً-ٰٟـ]/g, '')
-    .replace(/[أإآٱ]/g, 'ا').replace(/ة/g, 'ه').replace(/ى/g, 'ي').replace(/ؤ/g, 'و').replace(/ئ/g, 'ي');
-
-  /* ---------- build static UI from TYPES ---------- */
-  $('typeGrid').append(...TYPES.map(([k, s]) => {
-    const l = document.createElement('label');
-    l.dataset.type = k;
-    l.innerHTML = `<input type="radio" name="type" value="${k}"><span></span>`;
-    l.querySelector('span').textContent = s;
-    return l;
-  }));
-
-  /* ---------- render ---------- */
-  function renderFilters() {
-    const counts = {};
-    for (const it of state.items) counts[typeOf(it)] = (counts[typeOf(it)] || 0) + 1;
-    if (state.filter !== 'all' && !counts[state.filter]) state.filter = 'all';
-    const chips = [['all', 'الكل', state.items.length], ...TYPES.filter(([k]) => counts[k]).map(([k, , p]) => [k, p, counts[k]])];
-    const box = $('filters');
-    box.replaceChildren(...chips.map(([k, label, n]) => {
-      const b = document.createElement('button');
-      b.type = 'button'; b.className = 'chip'; b.dataset.f = k;
-      b.setAttribute('aria-pressed', String(state.filter === k));
-      b.textContent = label;
-      const c = document.createElement('span'); c.className = 'n'; c.textContent = n;
-      b.append(c);
-      return b;
-    }));
-    box.hidden = state.items.length === 0;
-  }
-
-  function renderGrid() {
-    const q = norm(state.query).trim().split(/\s+/).filter(Boolean);
-    const all = [...state.items].sort((a, b) => (b.createdAt || '').localeCompare(a.createdAt || ''));
-    const shown = all.filter((it) => {
-      if (state.filter !== 'all' && typeOf(it) !== state.filter) return false;
-      if (!q.length) return true;
-      const hay = norm([it.title, it.url, it.note, TYPE[typeOf(it)].s].join(' '));
-      return q.every((w) => hay.includes(w));
-    });
-
-    $('grid').replaceChildren(...shown.map((it) => {
-      const card = document.createElement('article');
-      card.className = it.id === state.fresh ? 'card fresh' : 'card';
-      card.dataset.type = typeOf(it);
-      card.tabIndex = 0;
-      card.setAttribute('role', 'button');
-      card.setAttribute('aria-label', 'تعديل: ' + (it.title || ''));
-
-      const meta = document.createElement('div'); meta.className = 'card-meta';
-      const tp = document.createElement('span'); tp.className = 'card-type'; tp.textContent = TYPE[typeOf(it)].s;
-      meta.append(tp);
-      if (it.createdAt) { const tm = document.createElement('time'); tm.dateTime = it.createdAt; tm.textContent = dateLabel(it.createdAt); meta.append(tm); }
-      card.append(meta);
-
-      if (it.title) { const h = document.createElement('h3'); h.textContent = it.title; card.append(h); }
-      const href = it.url ? normalizeUrl(it.url) : '';
-      if (href) {
-        const a = document.createElement('a');
-        a.className = 'card-link'; a.href = href; a.target = '_blank'; a.rel = 'noopener noreferrer';
-        a.textContent = prettyUrl(href);
-        a.addEventListener('click', (e) => e.stopPropagation());
-        card.append(a);
-      }
-      if (it.note) { const p = document.createElement('p'); p.className = 'card-note'; p.textContent = it.note; card.append(p); }
-
-      card.addEventListener('click', () => openSheet(it));
-      card.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openSheet(it); } });
-      return card;
-    }));
-
-    const empty = $('empty');
-    if (!all.length) { empty.textContent = 'ما فيه شي محفوظ. اضغط "أضف" وحط أول شي لفتك.'; empty.hidden = false; }
-    else if (!shown.length && q.length) { empty.textContent = 'ما لقيت شي فيه "' + state.query.trim() + '".'; empty.hidden = false; }
-    else if (!shown.length) { empty.textContent = 'ما فيه شي من هذا النوع.'; empty.hidden = false; }
-    else empty.hidden = true;
-  }
-
-  function render() {
-    $('count').textContent = state.items.length ? String(state.items.length) : '';
-    renderFilters();
-    renderGrid();
-    state.fresh = null;
-  }
-
-  /* ---------- sheet (add / edit) ---------- */
-  const sheet = $('sheet');
-  let lastType = 'link';
-
-  function resetDelete() { const d = $('delBtn'); d.classList.remove('armed'); d.textContent = 'حذف'; d.disabled = false; }
-
-  function openSheet(item = null) {
-    state.editing = item;
-    $('sheetTitle').textContent = item ? 'تعديل' : 'إضافة';
-    $('saveBtn').textContent = item ? 'احفظ التعديل' : 'احفظ';
-    const type = item ? typeOf(item) : lastType;
-    for (const r of document.querySelectorAll('input[name=type]')) r.checked = r.value === type;
-    $('fTitle').value = item ? item.title || '' : '';
-    $('fUrl').value = item ? item.url || '' : '';
-    $('fNote').value = item ? item.note || '' : '';
-    $('delBtn').hidden = !item;
-    resetDelete();
-    if (typeof sheet.showModal === 'function') sheet.showModal(); else sheet.setAttribute('open', '');
-    if (!item) setTimeout(() => $('fTitle').focus(), 50);
-  }
-  function closeSheet() {
-    if (sheet.open) { if (typeof sheet.close === 'function') sheet.close(); else sheet.removeAttribute('open'); }
-    state.editing = null;
-  }
-  $('sheetClose').addEventListener('click', closeSheet);
-  $('cancelBtn').addEventListener('click', closeSheet);
-  sheet.addEventListener('click', (e) => { if (e.target === sheet && !state.busy) closeSheet(); });
-  sheet.addEventListener('close', () => { state.editing = null; });
-  $('addBtn').addEventListener('click', () => openSheet());
-
-  $('sheetForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    if (state.busy) return;
-    const type = (document.querySelector('input[name=type]:checked') || {}).value || 'link';
-    const title = $('fTitle').value.trim();
-    const note = $('fNote').value.trim();
-    const url = normalizeUrl($('fUrl').value);
-    if (url === null) { toast('اللينك مو صحيح.', true); $('fUrl').focus(); return; }
-    if (!title && !url && !note) { toast('اكتب عنوان أو لينك على الأقل.', true); $('fTitle').focus(); return; }
-    const finalTitle = title || (url ? new URL(url).host.replace(/^www\./, '') : note.slice(0, 40));
-
-    const editing = state.editing;
-    state.busy = true;
-    const btn = $('saveBtn'); const label = btn.textContent;
-    btn.disabled = true; btn.textContent = 'يحفظ…';
-    try {
-      if (editing) {
-        const changes = { type, title: finalTitle, url, note, updatedAt: new Date().toISOString() };
-        await mutate((items) => items.map((i) => (i.id === editing.id ? { ...i, ...changes } : i)), 'تعديل: ' + finalTitle);
-        toast('انحفظ التعديل');
-      } else {
-        const item = { id: newId(), type, title: finalTitle, url, note, createdAt: new Date().toISOString() };
-        await mutate((items) => [...items, item], 'إضافة: ' + finalTitle);
-        state.fresh = item.id;
-        lastType = type;
-        toast('انحفظ');
-      }
-      closeSheet();
-      render();
-    } catch (err) {
-      if (err.status === 401) { closeSheet(); return showLock(err.message); }
-      toast(err.message || 'ما انحفظ. جرب مرة ثانية.', true);
-    } finally {
-      state.busy = false; btn.disabled = false; btn.textContent = label;
-    }
-  });
-
-  $('delBtn').addEventListener('click', async () => {
-    const d = $('delBtn'), item = state.editing;
-    if (!item || state.busy) return;
-    if (!d.classList.contains('armed')) {
-      d.classList.add('armed'); d.textContent = 'متأكد؟';
-      setTimeout(() => { if (d.textContent === 'متأكد؟') resetDelete(); }, 3000);
-      return;
-    }
-    state.busy = true; d.disabled = true; d.textContent = 'يحذف…';
-    try {
-      await mutate((items) => items.filter((i) => i.id !== item.id), 'حذف: ' + (item.title || item.id));
-      closeSheet(); render(); toast('انحذف');
-    } catch (err) {
-      if (err.status === 401) { closeSheet(); return showLock(err.message); }
-      toast(err.message || 'ما انحذف. جرب مرة ثانية.', true);
-      resetDelete();
-    } finally {
-      state.busy = false;
-    }
-  });
-
-  /* ---------- search & filters ---------- */
-  $('q').addEventListener('input', () => {
-    state.query = $('q').value;
-    $('qClear').hidden = !state.query;
-    renderGrid();
-  });
-  $('qClear').addEventListener('click', () => { $('q').value = ''; state.query = ''; $('qClear').hidden = true; renderGrid(); $('q').focus(); });
-  $('filters').addEventListener('click', (e) => {
-    const b = e.target.closest('.chip');
-    if (!b) return;
-    state.filter = b.dataset.f;
-    for (const c of $('filters').children) c.setAttribute('aria-pressed', String(c === b));
-    renderGrid();
-  });
-
-  /* ---------- lock / unlock ---------- */
-  async function open(cfg, { verify }) {
-    state.cfg = cfg;
-    if (verify) await checkRepo();
-    const d = await readData();
-    state.items = d.items; state.sha = d.sha;
-    render();
-    show('app');
-  }
-
-  function showLock(msg = '') {
-    const c = loadCfg() || {};
-    const guess = location.hostname.endsWith('.github.io') ? location.hostname.split('.')[0] : '';
-    $('owner').value = c.owner || guess;
-    if (c.repo) $('repo').value = c.repo;
-    $('token').value = '';
-    $('lockError').textContent = msg;
-    show('lock');
-  }
-
-  $('lockForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const cfg = { owner: $('owner').value.trim(), repo: $('repo').value.trim(), token: $('token').value.trim() };
-    if (!cfg.owner || !cfg.repo || !cfg.token) return;
-    const btn = $('unlockBtn');
-    btn.disabled = true; btn.textContent = 'يفتح…'; $('lockError').textContent = '';
-    try {
-      await open(cfg, { verify: true });
-      saveCfg(cfg);
-    } catch (err) {
-      state.cfg = null;
-      $('lockError').textContent = err.message || 'صار خطأ. جرب مرة ثانية.';
-    } finally {
-      btn.disabled = false; btn.textContent = 'افتح';
-    }
-  });
-
-  $('keyToggle').addEventListener('click', () => {
-    const t = $('token'), showing = t.type === 'text';
-    t.type = showing ? 'password' : 'text';
-    $('keyToggle').textContent = showing ? 'إظهار' : 'إخفاء';
-    $('keyToggle').setAttribute('aria-pressed', String(!showing));
-  });
-
-  $('lockBtn').addEventListener('click', () => {
-    const c = loadCfg();
-    if (c) saveCfg({ owner: c.owner, repo: c.repo });   // keep names, forget the key
-    state.cfg = null; state.items = []; state.sha = null;
-    $('grid').replaceChildren();
-    showLock();
-  });
-
-  // Coming back to the tab (e.g. after saving from another device) pulls the latest.
-  document.addEventListener('visibilitychange', async () => {
-    if (document.visibilityState !== 'visible' || !state.cfg || state.busy || sheet.open || $('app').hidden) return;
-    try { const d = await readData(); state.items = d.items; state.sha = d.sha; render(); } catch {}
-  });
-
-  /* ---------- start ---------- */
-  const saved = loadCfg();
-  if (PREVIEW) {
-    $('lockBtn').hidden = true;
-    $('previewNote').hidden = false;
-    open({ demo: true }, { verify: false });
-  } else if (saved && saved.token) {
-    open(saved, { verify: false }).catch((err) => showLock(err.message));
-  } else {
-    showLock();
-  }
-})();
+'use strict';
+const $=id=>document.getElementById(id);
+const PATHS={plus:'M12 5v14M5 12h14',home:'m3 10 9-7 9 7M5 9v12h5v-7h4v7h5V9',star:'m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-3-5.6 3 1.1-6.2L3 9.6l6.2-.9Z',search:'M21 21l-5-5M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0',refresh:'M20 7V3l-4 1M4 17v4l4-1M20 7a9 9 0 0 0-16 0M4 17a9 9 0 0 0 16 0',archive:'M3 3h18v5H3zM5 8v13h14V8M9 12h6',settings:'M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8M12 2v3m0 14v3M2 12h3m14 0h3M5 5l2 2m10 10 2 2M5 19l2-2M17 7l2-2',lock:'M6 10h12v11H6zM8 10V6a4 4 0 0 1 8 0v4M12 14v3',pin:'m8 3 8 0-1 6 4 4H5l4-4ZM12 13v9',person:'M16 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0M4 21v-3a8 8 0 0 1 16 0v3',course:'m2 8 10-5 10 5-10 5ZM6 10v7q6 5 12 0v-7M22 8v8',place:'M19 9c0 5-7 12-7 12S5 14 5 9a7 7 0 0 1 14 0ZM15 9a3 3 0 1 1-6 0 3 3 0 0 1 6 0',idea:'M9 18h6M10 22h4M8 15a7 7 0 1 1 8 0l-1 3H9Z',link:'m9 15 6-6M8 17l-1 1a4 4 0 0 1-6-6l5-5a4 4 0 0 1 6 0M16 7l1-1a4 4 0 0 1 6 6l-5 5a4 4 0 0 1-6 0',project:'M3 6h7l2 3h9v12H3ZM3 6V3h7l2 3h9v3',followup:'M5 4h14v18H5ZM9 2h6v4H9ZM8 11l2 2 5-5M8 17h7',journal:'M4 3h16v18H4ZM8 3v18M11 8h6M11 12h6M11 16h4',reference:'M12 5q-5-3-10-1v15q5-2 10 1 5-3 10-1V4q-5-2-10 1ZM12 5v15',info:'M4 3h12l4 4v14H4ZM14 3v6h6M8 13h8M8 17h5',tool:'M3 4h18v14H3ZM8 22h8M12 18v4M3 8h18',trash:'M3 6h18M9 6V3h6v3M5 6l1 15h12l1-15M10 10v7M14 10v7',download:'M12 3v12m-5-5 5 5 5-5M4 16v5h16v-5',edit:'m15 3 6 6-12 12H3v-6ZM12 6l6 6',copy:'M8 8h13v13H8ZM4 16H2V2h14v2'};
+const icon=n=>`<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="${PATHS[n]||PATHS.info}"/></svg>`;
+function icons(root=document){root.querySelectorAll('[data-icon]').forEach(e=>e.innerHTML=icon(e.dataset.icon))}
+const TYPES={person:['شخص','أشخاص','#6c8b95'],course:['دورة أو برنامج','دورات','#8e78ab'],place:['مكان','أماكن','#799b70'],idea:['فكرة','أفكار','#bf9460'],tool:['أداة أو موقع','أدوات ومواقع','#648d9f'],project:['مشروع','مشاريع','#b2886f'],followup:['متابعة أو معاملة','متابعات','#a4828f'],journal:['يومية','يوميات','#8b9270'],reference:['مرجع','مراجع','#7e8bae'],info:['ملاحظة حرة','ملاحظات','#7a9487'],link:['رابط','روابط','#648d9f'],data:['معلومة','معلومات','#8c7da0'],book:['كتاب','كتب','#7e8bae'],product:['منتج','منتجات','#b2886f']};
+const MAIN_TYPES=['person','course','place','idea','tool','project','followup','journal','reference','info','link'];
+const DOMAINS=['شخصي','الجامعة','يوم العائلة','التعلم والتطوير'];
+const SCHEMAS={
+person:[['organization','الجهة'],['role','المسمى أو التخصص'],['phone','رقم التواصل','tel'],['email','البريد الإلكتروني','email'],['met','كيف تعرفت عليه؟']],
+course:[['organization','الجهة المقدمة'],['startDate','موعد البداية','date'],['duration','المدة'],['location','مكان الحضور أو وصفه'],['platform','رابط المنصة أو التسجيل','url'],['status','حالة التسجيل','select',['مهتم','قدمت','مقبول','قيد الدراسة','مكتمل']],['personId','شخص التواصل المحفوظ','relation','person'],['placeId','المكان المحفوظ','relation','place']],
+place:[['address','العنوان'],['maps','رابط الخرائط','url'],['phone','رقم التواصل','tel'],['reason','سبب حفظ المكان']],
+idea:[['status','حالة الفكرة','select',['جديدة','للتجربة','قيد التنفيذ','نفذتها']],['nextStep','الخطوة القادمة']],
+tool:[['purpose','كيف تفيدك؟'],['status','التجربة','select',['للتجربة','جربتها','أستخدمها']],['subscription','الاشتراك','select',['بدون اشتراك','مجاني','مدفوع']],['renewalDate','موعد التجديد','date']],
+project:[['goal','الهدف'],['status','الحالة','select',['فكرة','قيد التخطيط','قيد التنفيذ','مكتمل','متوقف']],['nextStep','الخطوة القادمة'],['dueDate','الموعد المستهدف','date'],['personId','الشخص المرتبط','relation','person'],['ideaId','الفكرة المرتبطة','relation','idea']],
+followup:[['organization','الجهة'],['referenceNo','رقم المعاملة'],['lastAction','آخر إجراء'],['nextStep','ما الذي تنتظره؟'],['dueDate','موعد المتابعة','date'],['status','الحالة','select',['بانتظار رد','قيد المتابعة','مكتمل']],['personId','الشخص المسؤول','relation','person']],
+journal:[['entryDate','تاريخ اليومية','date']],reference:[['author','المؤلف أو المصدر'],['format','نوع المرجع','select',['كتاب','مقال','فيديو','بحث','بودكاست']],['takeaway','أهم ما استفدته']],info:[],link:[],data:[],book:[['author','المؤلف'],['takeaway','أهم ما استفدته']],product:[['price','السعر'],['reason','سبب الاهتمام']]};
+const STORE='lafta.v1',THEME='lafta.theme';
+const state={cfg:null,root:{version:2,items:[]},sha:null,view:'home',type:'all',query:'',domain:'all',sort:'new',from:'',busy:false,edit:null,draft:null,selectedType:'info',readerId:null,lastSync:null,epoch:0};
+const items=()=>state.root.items;
+const typeOf=i=>TYPES[i.type]?i.type:'info';
+const normal=s=>String(s??'').toLowerCase().replace(/[ً-ٰٟـ]/g,'').replace(/[أإآٱ]/g,'ا').replace(/ة/g,'ه').replace(/ى/g,'ي');
+const escape=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const typeIcon=t=>icon(PATHS[t]?t:({book:'reference',data:'info',product:'project'}[t]||'info'));
+const date=s=>{if(!s)return '';const d=new Date(s);return isNaN(d)?String(s):new Intl.DateTimeFormat('ar-SA-u-ca-gregory-nu-latn',{day:'numeric',month:'short',year:'numeric'}).format(d)};
+const normUrl=s=>{if(!String(s||'').trim())return '';try{let u=new URL(/^[a-z][a-z0-9+.-]*:/i.test(s)?s:'https://'+s);return ['https:','http:'].includes(u.protocol)?u.href:null}catch{return null}};
+function notify(msg,bad=false){$('toast').textContent=msg;$('toast').className='toast'+(bad?' error-toast':'');$('toast').hidden=false;clearTimeout(notify.timer);notify.timer=setTimeout(()=>$('toast').hidden=true,bad?6500:2600)}
+function loadConfig(){try{return JSON.parse(localStorage.getItem(STORE))}catch{return null}}
+function setScreen(s){for(const id of ['loading','lock','app'])$(id).hidden=id!==s}
+function setBusy(b){state.busy=b;document.querySelectorAll('button').forEach(e=>e.disabled=b);$('syncLabel').textContent=b?'جارٍ الحفظ…':state.lastSync?'آخر تحديث '+new Intl.DateTimeFormat('ar-SA',{hour:'2-digit',minute:'2-digit'}).format(state.lastSync):''}
+function error(status){if(status===401)return 'مفتاح الوصول غير صالح أو انتهت صلاحيته';if(status===403||status===429)return 'تعذر الوصول حاليًا: تحقق من الصلاحيات أو حد الطلبات وحاول لاحقًا';if(status===404)return 'المستودع غير متاح لهذا المفتاح أو الاسم غير صحيح';return 'تعذر إكمال الطلب ('+status+') — لم نحفظ التغيير'}
+const repoPath=()=>'/repos/'+encodeURIComponent(state.cfg.owner)+'/'+encodeURIComponent(state.cfg.repo);
+async function gh(path,opts={}){let r;try{r=await fetch('https://api.github.com'+path,{...opts,cache:'no-store',headers:{Authorization:'Bearer '+state.cfg.token,Accept:'application/vnd.github+json',...(opts.body?{'Content-Type':'application/json'}:{})}})}catch{throw Error('تعذر الاتصال — تأكد من الإنترنت، ثم أعد المحاولة')}return r}
+function decode(s){return new TextDecoder('utf-8',{fatal:true}).decode(Uint8Array.from(atob(s.replace(/\s/g,'')),c=>c.charCodeAt(0)))}
+function encode(s){const b=new TextEncoder().encode(s);let v='';for(let i=0;i<b.length;i+=8192)v+=String.fromCharCode(...b.subarray(i,i+8192));return btoa(v)}
+function parseData(text){let root;try{root=JSON.parse(text)}catch{throw Error('ملف البيانات غير قابل للقراءة — أوقفنا الحفظ لحماية محفوظاتك')}
+if(!root||typeof root!=='object'||!Array.isArray(root.items))throw Error('تنسيق ملف البيانات غير مدعوم — لن نستبدله بملف فارغ');
+const ids=new Set();for(const i of root.items){if(!i||typeof i!=='object'||typeof i.id!=='string'||ids.has(i.id))throw Error('توجد عناصر بلا معرّف صالح أو بمعرّفات متكررة — أوقفنا الحفظ لحماية البيانات');ids.add(i.id)}return root}
+async function checkRepo(){const r=await gh(repoPath());if(!r.ok)throw Error(error(r.status));const j=await r.json();if(j.private!==true)throw Error('مستودع البيانات يجب أن يكون Private — لن نحفظ بياناتك في مستودع عام')}
+async function readData(){if(state.cfg.demo)return {root:structuredClone(state.demoRoot),sha:'demo'};const r=await gh(repoPath()+'/contents/data.json');if(r.status===404){const listing=await gh(repoPath()+'/contents/');if(listing.ok){const entries=await listing.json();if(Array.isArray(entries)&&!entries.some(e=>e.name==='data.json'))return {root:{version:2,items:[]},sha:null}}throw Error('تعذر التحقق من ملف البيانات — لم نعامل الخطأ كملف فارغ')}
+if(!r.ok)throw Error(error(r.status));const j=await r.json();if(j.encoding!=='base64'||!j.content)throw Error('تعذر تحميل ملف البيانات كاملًا — لم نغيّر أي بيانات');return {root:parseData(decode(j.content)),sha:j.sha}}
+async function writeData(root,sha){if(state.cfg.demo){state.demoRoot=structuredClone(root);return {sha:'demo'}}const body={message:'Update personal library',content:encode(JSON.stringify(root,null,2)+'\n')};if(sha)body.sha=sha;const r=await gh(repoPath()+'/contents/data.json',{method:'PUT',body:JSON.stringify(body)});if(r.status===409)return {conflict:true};if(r.status===422){const j=await r.json();if(!sha&&/sha/i.test(j.message||''))return {conflict:true};throw Error('رفض GitHub الحفظ — تحقق من صلاحيات المستودع وحاول مجددًا')};if(!r.ok)throw Error(error(r.status));const j=await r.json();return {sha:j.content.sha}}
+function applyChange(root,op){const next=structuredClone(root),idx=next.items.findIndex(i=>i.id===op.id);if(op.kind==='add'){if(idx<0)next.items.push(op.item);return next}if(idx<0)throw Error('هذا العنصر لم يعد موجودًا — حدّث المحفوظات');const current=next.items[idx];if(op.kind==='edit'&&JSON.stringify(current)!==JSON.stringify(op.base))throw Error('تغير هذا العنصر من جهاز آخر — كتابتك ما زالت هنا، انسخها ثم حدّث المحفوظات');if(op.kind==='patch'&&Object.keys(op.patch).some(k=>JSON.stringify(current[k])!==JSON.stringify(op.base[k])))throw Error('تغيرت حالة العنصر من جهاز آخر — حدّث المحفوظات');next.items[idx]={...current,...op.patch,updatedAt:new Date().toISOString()};return next}
+async function commit(op){if(state.busy)throw Error('انتظر اكتمال العملية الحالية');setBusy(true);try{if(!state.cfg.demo)await checkRepo();for(let a=0;a<3;a++){const d=await readData(),next=applyChange(d.root,op),r=await writeData(next,d.sha);if(r.conflict)continue;state.root=next;state.sha=r.sha;state.lastSync=new Date();state.epoch++;return}throw Error('هناك تعديل متزامن — أعد المحاولة، كتابتك محفوظة في النموذج')}finally{setBusy(false)}}
+async function sync(){if(!state.cfg||state.busy)return;const epoch=state.epoch;$('syncBtn').disabled=true;try{if(!state.cfg.demo)await checkRepo();const d=await readData();if(epoch!==state.epoch||state.busy||!state.cfg)return;state.root=d.root;state.sha=d.sha;state.lastSync=new Date();render();setBusy(false);notify('تم تحديث المحفوظات')}catch(e){notify(e.message,true)}finally{$('syncBtn').disabled=false}}
+const VIEWS={home:['كل ما يهمك','أشياء تحفظها اليوم، وتحتاجها غدًا','home'],favorites:['المفضلة','الأشياء التي ترجع لها كثيرًا','star'],archive:['الأرشيف','محفوظات تحتفظ بها بعيدًا عن الواجهة','archive'],trash:['سلة المحذوفات','محفوظاتك هنا قابلة للاستعادة','trash'],settings:['على طريقتك','المظهر والاتصال ونسختك الاحتياطية','settings']};
+function nav(){ $('sideNav').innerHTML=Object.entries(VIEWS).map(([k,v])=>`<button data-view="${k}">${icon(v[2])}<span>${v[0]==='كل ما يهمك'?'الرئيسية':v[0]==='على طريقتك'?'الإعدادات':v[0]}</span></button>`).join('')}
+function setView(v){state.view=v;state.type='all';state.query='';state.from='';state.domain='all';$('search').value='';$('fromDate').value='';$('domainFilter').value='all';render();window.scrollTo({top:0,behavior:'smooth'})}
+function activeItems(){return items().filter(i=>!i.deletedAt&&!i.archived)}
+function baseItems(){return items().filter(i=>state.view==='trash'?!!i.deletedAt:state.view==='archive'?!!i.archived&&!i.deletedAt:state.view==='favorites'?!!i.favorite&&!i.deletedAt&&!i.archived:!i.deletedAt&&!i.archived)}
+function matches(i){if(state.type!=='all'&&typeOf(i)!==state.type)return false;if(state.domain!=='all'&&(i.domain||'شخصي')!==state.domain)return false;if(state.from&&(!i.createdAt||String(i.createdAt).slice(0,10)<state.from))return false;const q=normal(state.query).trim().split(/\s+/).filter(Boolean);const linked=Object.entries(i.fields||{}).filter(([k])=>k.endsWith('Id')).map(([,id])=>items().find(x=>x.id===id)?.title||'');const hay=normal([i.title,i.note,i.url,i.domain,JSON.stringify(i.fields||{}),...(Array.isArray(i.tags)?i.tags:[]),...linked,TYPES[typeOf(i)][0]].join(' '));return q.every(x=>hay.includes(x))}
+function card(i){const t=typeOf(i),el=document.createElement('article');el.className='card';el.style.setProperty('--accent',TYPES[t][2]);const desc=i.note||i.fields?.organization||i.fields?.purpose||i.fields?.goal||i.fields?.address||i.url||'افتح لإضافة التفاصيل';el.innerHTML=`<div class="card-top"><div class="type-icon"><span>${typeIcon(t)}</span><span>${TYPES[t][0]}</span></div><button class="favorite ${i.favorite?'on':''}" aria-label="${i.favorite?'إزالة من المفضلة':'إضافة إلى المفضلة'}" aria-pressed="${!!i.favorite}" data-star="${escape(i.id)}">${icon('star')}</button></div><button class="card-open" data-open="${escape(i.id)}"><h3>${escape(i.title||'بدون عنوان')}</h3><p class="excerpt">${escape(desc)}</p></button>${Array.isArray(i.tags)&&i.tags.length?'<div class="tags">'+i.tags.slice(0,3).map(t=>'<span class="tag">#'+escape(t)+'</span>').join('')+'</div>':''}<div class="card-foot"><span class="domain">${escape(i.domain||'شخصي')}</span><span>${i.pinned?'⌖ ':''}${escape(date(i.createdAt))}</span></div>`;return el}
+function render(){const v=VIEWS[state.view];$('viewTitle').textContent=v[0];$('viewSubtitle').textContent=v[1];$('library').hidden=state.view==='settings';$('settings').hidden=state.view!=='settings';$('totalCircle').hidden=state.view==='settings';document.querySelectorAll('[data-view]').forEach(b=>b.classList.toggle('active',b.dataset.view===state.view));$('connection').textContent=state.cfg?.demo?'معاينة محلية':(state.cfg?.owner||'')+' / '+(state.cfg?.repo||'');if(state.view==='settings')return;
+const base=baseItems();$('total').textContent=base.length;const present=[...new Set(base.map(typeOf))];const types=[...MAIN_TYPES,...present.filter(t=>!MAIN_TYPES.includes(t))];$('typeFilters').innerHTML=[['all','الكل'],...types.map(t=>[t,TYPES[t][1]])].map(([k,l])=>`<button class="chip ${state.type===k?'active':''}" data-filter="${k}" aria-pressed="${state.type===k}">${k==='all'?'':typeIcon(k)}${l}</button>`).join('');let filtered=base.filter(matches).sort((a,b)=>state.sort==='title'?String(a.title||'').localeCompare(String(b.title||''),'ar'):String(b[state.sort==='updated'?'updatedAt':'createdAt']||b.createdAt||'').localeCompare(String(a[state.sort==='updated'?'updatedAt':'createdAt']||a.createdAt||'')));
+const pinned=state.view==='home'?filtered.filter(i=>i.pinned):[];const rest=state.view==='home'?filtered.filter(i=>!i.pinned):filtered;$('pinnedSection').hidden=!pinned.length;$('pinnedGrid').replaceChildren(...pinned.map(card));$('grid').replaceChildren(...rest.map(card));$('results').textContent=filtered.length+' نتيجة';$('listHeading').textContent=state.view==='trash'?'المحذوفة':state.view==='archive'?'المؤرشفة':'محفوظاتك';$('empty').hidden=filtered.length>0;const searching=state.query||state.type!=='all'||state.domain!=='all'||state.from;$('empty').innerHTML=icon(searching?'search':'journal')+`<h2>${searching?'ما لقينا نتيجة مطابقة':state.view==='home'?'ابدأ بشيء يستحق الحفظ':'لا توجد عناصر هنا بعد'}</h2><p>${searching?'جرّب كلمة أخرى أو غيّر خيارات التصفية':'شخص، فكرة، دورة… أول إضافة هي البداية'}</p>${state.view==='home'&&!searching?'<button class="btn" data-action="add">'+icon('plus')+' إضافة أول محفوظة</button>':''}`;$('clearSearch').hidden=!state.query}
+function fieldHTML(f,value=''){const [key,label,type,options]=f;let control;if(type==='select'||type==='relation'){const opts=type==='relation'?items().filter(i=>typeOf(i)===options&&!i.deletedAt&&!i.archived&&i.id!==state.edit?.id).map(i=>[i.id,i.title]):options.map(i=>[i,i]);if(value&&!opts.some(([k])=>k===value))opts.push([value,type==='relation'?'عنصر مرتبط غير متاح':value]);control=`<select data-field="${key}"><option value="">اختياري</option>${opts.map(([k,l])=>`<option value="${escape(k)}" ${k===value?'selected':''}>${escape(l)}</option>`).join('')}</select>`}else control=`<input data-field="${key}" type="${type==='url'?'text':type||'text'}" ${['url','email','tel'].includes(type)?'dir="ltr"':''} value="${escape(value)}" maxlength="2000">`;return `<label><span>${label}</span>${control}</label>`}
+function captureFields(){if(state.draft)document.querySelectorAll('[data-field]').forEach(e=>state.draft.fields[e.dataset.field]=e.value)}
+function formType(t){captureFields();state.selectedType=t;const allowed=[...MAIN_TYPES];if(!allowed.includes(t))allowed.push(t);$('typePicker').innerHTML=allowed.map(k=>`<button type="button" class="type-choice ${k===t?'active':''}" data-choose="${k}" aria-pressed="${k===t}">${typeIcon(k)}${TYPES[k][0]}</button>`).join('');$('titleLabel').textContent=t==='person'?'اسم الشخص':t==='course'?'اسم الدورة أو البرنامج':t==='place'?'اسم المكان':'العنوان';$('noteLabel').textContent=t==='journal'?'اكتب يوميتك':'ملاحظات وتفاصيل';$('dynamicFields').innerHTML=(SCHEMAS[t]||[]).map(f=>fieldHTML(f,state.draft.fields[f[0]]||'')).join('')}
+function openEditor(item=null){if(state.busy)return;state.edit=item?structuredClone(item):null;state.draft={fields:{...(item?.fields||{})}};$('fTitle').value=item?.title||'';$('fNote').value=item?.note||'';$('fUrl').value=item?.url||'';$('fTags').value=Array.isArray(item?.tags)?item.tags.join('، '):'';const domains=[...DOMAINS];if(item?.domain&&!domains.includes(item.domain))domains.push(item.domain);$('fDomain').innerHTML=domains.map(d=>`<option>${escape(d)}</option>`).join('');$('fDomain').value=item?.domain||'شخصي';$('dynamicFields').replaceChildren();$('editorTitle').textContent=item?'تعديل المحفوظة':'إضافة جديدة';$('formError').textContent='';formType(item?typeOf(item):'info');$('editor').showModal()}
+function closeDialog(id){if(state.busy)return;$(id).close()}
+function fieldValue(i,f){const val=i.fields?.[f[0]];if(!val)return '';if(f[2]==='relation'){const linked=items().find(x=>x.id===val&&!x.deletedAt);return linked?`<button class="ghost" data-open="${escape(linked.id)}">${escape(linked.title)} ←</button>`:'عنصر مرتبط غير متاح'}if(f[2]==='url'){const href=normUrl(val);return href?`<a href="${escape(href)}" target="_blank" rel="noopener noreferrer">فتح الرابط ↗</a>`:escape(val)}return escape(f[2]==='date'?date(val):val)}
+function openReader(id){const i=items().find(x=>x.id===id);if(!i)return;state.readerId=id;const t=typeOf(i);$('readerType').innerHTML=typeIcon(t)+' '+TYPES[t][0];const fields=(SCHEMAS[t]||[]).filter(f=>i.fields?.[f[0]]);const href=normUrl(i.url);const backlinks=items().filter(x=>x.id!==id&&!x.deletedAt&&Object.entries(x.fields||{}).some(([k,v])=>k.endsWith('Id')&&v===id));$('readerBody').innerHTML=`<span class="domain">${escape(i.domain||'شخصي')}</span><h1 class="reader-title" id="readerTitle">${escape(i.title||'بدون عنوان')}</h1><small>أضيفت ${escape(date(i.createdAt))}${i.updatedAt?' · عُدّلت '+escape(date(i.updatedAt)):''}</small>${i.note?'<p class="reader-note">'+escape(i.note)+'</p>':''}${href?'<p><a class="btn quiet" href="'+escape(href)+'" target="_blank" rel="noopener noreferrer">'+icon('link')+' فتح الرابط</a></p>':''}<div class="detail-grid">${fields.map(f=>`<div class="detail"><small>${f[1]}</small><span>${fieldValue(i,f)}</span></div>`).join('')}</div>${Array.isArray(i.tags)&&i.tags.length?'<div class="tags" style="margin-top:20px">'+i.tags.map(t=>'<span class="tag">#'+escape(t)+'</span>').join('')+'</div>':''}${backlinks.length?'<hr class="line"><h3>مرتبط بهذه المحفوظة</h3><div class="related">'+backlinks.map(x=>`<button class="btn quiet" data-open="${escape(x.id)}">${escape(x.title)}</button>`).join('')+'</div>':''}`;
+$('readerActions').innerHTML=i.deletedAt?'<button class="btn" data-item-action="restore">استعادة المحفوظة</button>':`<button class="btn" data-item-action="edit">${icon('edit')} تعديل</button><button class="ghost" data-item-action="favorite">${icon('star')} ${i.favorite?'إلغاء المفضلة':'المفضلة'}</button><button class="ghost" data-item-action="pin">${icon('pin')} ${i.pinned?'إلغاء التثبيت':'تثبيت'}</button><button class="ghost" data-item-action="copy">${icon('copy')} نسخ</button><button class="ghost" data-item-action="archive">${icon('archive')} ${i.archived?'إلغاء الأرشفة':'أرشفة'}</button><button class="ghost danger" data-item-action="trash">${icon('trash')} حذف</button>`;if(!$('reader').open)$('reader').showModal()}
+async function patchItem(i,patch){try{await commit({kind:'patch',id:i.id,base:i,patch});render();if($('reader').open)openReader(i.id);notify('تم الحفظ');return true}catch(e){notify(e.message,true);return false}}
+$('editForm').addEventListener('submit',async e=>{e.preventDefault();if(state.busy)return;captureFields();const type=state.selectedType,title=$('fTitle').value.trim(),note=$('fNote').value.trim(),url=normUrl($('fUrl').value.trim());if(url===null){$('formError').textContent='أدخل رابطًا يبدأ بـ https:// أو عنوان موقع صالح';return}if(!title&&!note&&!url){$('formError').textContent='اكتب اسمًا أو ملاحظة أو رابطًا للحفظ';return}const fields={...state.draft.fields};for(const f of SCHEMAS[type]||[]){if(f[2]==='url'&&fields[f[0]]){const u=normUrl(fields[f[0]]);if(u===null){$('formError').textContent='تحقق من '+f[1];return}fields[f[0]]=u}}
+const patch={type,title:title||(url?new URL(url).hostname:note.slice(0,70)),note,url,domain:$('fDomain').value,tags:[...new Set($('fTags').value.split(/[,،]/).map(t=>t.trim().replace(/^#/, '')).filter(Boolean))],fields};const edit=state.edit;$('formError').textContent='';$('saveBtn').textContent='جارٍ الحفظ…';try{const id=edit?.id||crypto.randomUUID();await commit(edit?{kind:'edit',id,base:edit,patch}:{kind:'add',id,item:{id,...patch,createdAt:new Date().toISOString()}});$('editor').close();render();if($('reader').open)openReader(id);notify('تم حفظ '+TYPES[type][0])}catch(err){$('formError').textContent=err.message}finally{$('saveBtn').textContent='حفظ'}});
+document.addEventListener('click',async e=>{const b=e.target.closest('button');if(!b||b.disabled)return;if(b.dataset.close){closeDialog(b.dataset.close);return}if(b.dataset.view){setView(b.dataset.view);return}if(b.dataset.choose){formType(b.dataset.choose);return}if(b.dataset.filter){state.type=b.dataset.filter;render();return}if(b.dataset.open){openReader(b.dataset.open);return}if(b.dataset.star){const i=items().find(x=>x.id===b.dataset.star);if(i)await patchItem(i,{favorite:!i.favorite});return}const a=b.dataset.action;if(a==='add')openEditor();if(a==='sync')await sync();if(a==='lock')lock();if(a==='export')exportData();if(b.dataset.itemAction){const i=items().find(x=>x.id===state.readerId);if(!i)return;const a=b.dataset.itemAction;if(a==='edit'){openEditor(i);return}if(a==='copy'){try{const details=(SCHEMAS[typeOf(i)]||[]).filter(f=>i.fields?.[f[0]]).map(f=>f[1]+': '+(f[2]==='relation'?items().find(x=>x.id===i.fields[f[0]])?.title||'':i.fields[f[0]])).join('\n');await navigator.clipboard.writeText([i.title,i.note,i.url,details].filter(Boolean).join('\n\n'));notify('تم نسخ المحتوى')}catch{notify('تعذر النسخ — يمكنك تحديد النص ونسخه يدويًا',true)}return}const patch=a==='favorite'?{favorite:!i.favorite}:a==='pin'?{pinned:!i.pinned}:a==='archive'?{archived:!i.archived}:a==='trash'?{deletedAt:new Date().toISOString()}:a==='restore'?{deletedAt:null}:null;if(patch){const ok=await patchItem(i,patch);if(ok&&(a==='trash'||a==='archive'||a==='restore'))$('reader').close()}}});
+for(const d of ['editor','reader']){$(d).addEventListener('cancel',e=>{if(state.busy)e.preventDefault()})}
+$('search').addEventListener('input',e=>{state.query=e.target.value;render()});$('clearSearch').onclick=()=>{state.query='';$('search').value='';render()};$('domainFilter').onchange=e=>{state.domain=e.target.value;render()};$('sort').onchange=e=>{state.sort=e.target.value;render()};$('fromDate').onchange=e=>{state.from=e.target.value;render()};
+function theme(){let t='system';try{t=localStorage.getItem(THEME)||'system'}catch{}$('theme').value=t;document.documentElement.dataset.theme=t==='system'?(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'):t}
+$('theme').onchange=e=>{try{localStorage.setItem(THEME,e.target.value)}catch{}theme()};matchMedia('(prefers-color-scheme: dark)').addEventListener('change',theme);
+function exportData(){const blob=new Blob([JSON.stringify(state.root,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='lafta-backup-'+new Date().toISOString().slice(0,10)+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
+function lock(){if(state.busy)return;state.epoch++;const c=state.cfg;try{if(c&&!c.demo)localStorage.setItem(STORE,JSON.stringify({owner:c.owner,repo:c.repo}))}catch{}state.cfg=null;state.root={version:2,items:[]};state.sha=null;state.edit=null;state.draft=null;state.readerId=null;state.lastSync=null;for(const id of ['grid','pinnedGrid','readerBody','readerActions','dynamicFields'])$(id).replaceChildren();$('editForm').reset();$('token').value='';for(const id of ['reader','editor'])if($(id).open)$(id).close();setScreen('lock')}
+async function connect(cfg,remember){state.cfg=cfg;try{if(!cfg.demo)await checkRepo();const d=await readData();state.root=d.root;state.sha=d.sha;state.lastSync=new Date();state.epoch++;if(!cfg.demo){try{localStorage.setItem(STORE,JSON.stringify(remember?cfg:{owner:cfg.owner,repo:cfg.repo}))}catch{notify('تم الاتصال، لكن تعذر تذكّر المفتاح على هذا الجهاز',true)}}$('token').value='';$('demoNotice').hidden=!cfg.demo;$('saveHint').textContent=cfg.demo?'معاينة فقط — لا تحفظ في GitHub':'يحفظ في مستودعك الخاص';setScreen('app');setView('home');setBusy(false)}catch(e){state.cfg=null;throw e}}
+$('lockForm').onsubmit=async e=>{e.preventDefault();const cfg={owner:$('owner').value.trim(),repo:$('repo').value.trim(),token:$('token').value.trim()};$('unlock').disabled=true;$('unlock').textContent='جارٍ الاتصال…';$('lockError').textContent='';try{await connect(cfg,$('remember').checked)}catch(err){$('lockError').textContent=err.message}finally{$('unlock').disabled=false;$('unlock').textContent='افتح لفتة'}};
+$('showKey').onclick=()=>{const show=$('token').type==='password';$('token').type=show?'text':'password';$('showKey').textContent=show?'إخفاء':'إظهار'};
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&state.cfg&&!state.busy&&!$('reader').open&&!$('editor').open)sync()});
+window.addEventListener('beforeunload',e=>{if(state.busy||$('editor').open){e.preventDefault();e.returnValue=''}});
+icons();nav();theme();$('today').textContent=new Intl.DateTimeFormat('ar-SA-u-ca-gregory-nu-latn',{weekday:'long',day:'numeric',month:'long'}).format(new Date());$('domainFilter').innerHTML='<option value="all">كل المجالات</option>'+DOMAINS.map(d=>'<option>'+d+'</option>').join('');
+// Demo mode is opt-in, memory-only, and never reads real credentials or makes GitHub requests.
+const demo=new URLSearchParams(location.search).get('demo')==='1';
+if(demo){const now=new Date().toISOString();state.demoRoot={version:2,items:[{id:'demo-person',type:'person',title:'شخص للتجربة',domain:'الجامعة',note:'مثال افتراضي لحفظ معلومات شخص والتواصل معه',fields:{organization:'جهة تجريبية',role:'منسق برامج'},favorite:true,createdAt:now},{id:'demo-place',type:'place',title:'مركز التدريب',domain:'التعلم والتطوير',fields:{address:'جدة — عنوان تجريبي'},note:'مكان محفوظ يمكن ربطه بالدورات',createdAt:now},{id:'demo-course',type:'course',title:'برنامج التحول الرقمي',domain:'التعلم والتطوير',note:'مثال افتراضي لدورة تجمع موعدها ومكانها وشخص التواصل',fields:{status:'مهتم',duration:'أربعة أسابيع',personId:'demo-person',placeId:'demo-place'},tags:['تعلم'],pinned:true,createdAt:now},{id:'demo-idea',type:'idea',title:'فكرة لإقامة أكثر راحة',domain:'يوم العائلة',note:'مكان للأفكار الصغيرة التي يمكن تطويرها لاحقًا',fields:{status:'للتجربة'},createdAt:now},{id:'demo-journal',type:'journal',title:'تفاصيل من يوم جميل',domain:'شخصي',note:'مساحة للكتابة عن يومك، والأشياء التي لفتت انتباهك',createdAt:now},{id:'demo-tool',type:'tool',title:'أداة أريد تجربتها',domain:'شخصي',note:'سجّل فائدة الأداة هنا حتى تعرف لماذا حفظتها',fields:{status:'للتجربة',subscription:'مجاني'},createdAt:now}]};connect({demo:true},false).catch(e=>{$('lockError').textContent=e.message;setScreen('lock')})}else{const c=loadConfig();if(c){if(c.owner)$('owner').value=c.owner;if(c.repo)$('repo').value=c.repo}if(c?.token)connect(c,true).catch(e=>{$('lockError').textContent=e.message;setScreen('lock')});else setScreen('lock')}
 </script>
-</body>
-</html>
+</body></html>
